@@ -1,0 +1,202 @@
+<footer class="footer">
+  <div class="footer__content">
+    {% if section.blocks.size > 0 %}
+      <div class="footer__blocks">
+        {% for block in section.blocks %}
+          <div class="footer__block footer__block--{{ block.type }}" {{ block.shopify_attributes }}>
+            {% case block.type %}
+              {% when 'text' %}
+                <div class="footer__block-title">{{ block.settings.title }}</div>
+                <div class="footer__block-content rte">{{ block.settings.text }}</div>
+              
+              {% when 'newsletter' %}
+                <div class="footer__block-title">{{ block.settings.title }}</div>
+                {% form 'customer', id: 'ContactFooter' %}
+                  <input type="hidden" name="contact[tags]" value="newsletter">
+                  <div class="footer__newsletter">
+                    <div class="footer__newsletter-input-wrapper">
+                      <input
+                        type="email"
+                        name="contact[email]"
+                        id="ContactFooter-email"
+                        class="footer__newsletter-input"
+                        value="{{ form.email }}"
+                        placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"
+                        required
+                      >
+                      <button type="submit" class="footer__newsletter-submit" name="commit">
+                        {{ 'general.newsletter_form.submit' | t }}
+                      </button>
+                    </div>
+                    {%- if form.errors -%}
+                      <div class="footer__newsletter-error">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</div>
+                    {%- endif -%}
+                    {%- if form.posted_successfully? -%}
+                      <div class="footer__newsletter-success">{{ 'general.newsletter_form.confirmation' | t }}</div>
+                    {%- endif -%}
+                  </div>
+                {% endform %}
+              
+              {% when 'link_list' %}
+                <div class="footer__block-title">{{ block.settings.title }}</div>
+                {%- assign footer_linklist = block.settings.menu -%}
+                {% if linklists[footer_linklist].links.size > 0 %}
+                  <ul class="footer__menu">
+                    {% for link in linklists[footer_linklist].links %}
+                      <li class="footer__menu-item">
+                        <a href="{{ link.url }}" class="footer__menu-link">
+                          {{ link.title }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              
+              {% when 'social' %}
+                <div class="footer__block-title">{{ block.settings.title }}</div>
+                <ul class="footer__social">
+                  {% if settings.social_facebook_link != blank %}
+                    <li class="footer__social-item">
+                      <a href="{{ settings.social_facebook_link }}" class="footer__social-link">
+                        {% render 'icon-facebook' %}
+                        <span class="visually-hidden">Facebook</span>
+                      </a>
+                    </li>
+                  {% endif %}
+                  {% if settings.social_instagram_link != blank %}
+                    <li class="footer__social-item">
+                      <a href="{{ settings.social_instagram_link }}" class="footer__social-link">
+                        {% render 'icon-instagram' %}
+                        <span class="visually-hidden">Instagram</span>
+                      </a>
+                    </li>
+                  {% endif %}
+                  {% if settings.social_twitter_link != blank %}
+                    <li class="footer__social-item">
+                      <a href="{{ settings.social_twitter_link }}" class="footer__social-link">
+                        {% render 'icon-twitter' %}
+                        <span class="visually-hidden">Twitter</span>
+                      </a>
+                    </li>
+                  {% endif %}
+                </ul>
+            {% endcase %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    
+    <div class="footer__bottom">
+      <div class="footer__copyright">
+        &copy; {{ 'now' | date: "%Y" }} {{ shop.name }}. {{ section.settings.copyright_text }}
+      </div>
+      
+      {% if section.settings.show_payment_icons %}
+        <div class="footer__payment">
+          {% for type in shop.enabled_payment_types %}
+            {{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright text",
+      "default": "All rights reserved."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "About Us"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Use this text to share information about your brand with your customers.</p>"
+        }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Subscribe to our newsletter"
+        }
+      ]
+    },
+    {
+      "type": "link_list",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Quick links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "footer"
+        }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social media",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Follow us"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        {
+          "type": "text"
+        },
+        {
+          "type": "newsletter"
+        },
+        {
+          "type": "link_list"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %} 

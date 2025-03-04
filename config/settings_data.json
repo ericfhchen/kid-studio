@@ -1,0 +1,61 @@
+{
+  "current": {
+    "color_primary": "#000000",
+    "color_secondary": "#333333",
+    "color_accent": "#0070c9",
+    "color_body_bg": "#ffffff",
+    "color_body_text": "#333333",
+    "color_headings": "#000000",
+    "color_button_bg": "#000000",
+    "color_button_text": "#ffffff",
+    "font_heading": "helvetica_n4",
+    "font_size_heading_base": 28,
+    "font_body": "helvetica_n4",
+    "font_size_body_base": 16,
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {
+          "logo_width": 100,
+          "menu": "main-menu",
+          "header_bg": "#ffffff",
+          "header_text": "#000000"
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "footer-0": {
+            "type": "text",
+            "settings": {
+              "title": "About Us",
+              "text": "<p>Use this text to share information about your brand with your customers.</p>"
+            }
+          },
+          "footer-1": {
+            "type": "newsletter",
+            "settings": {
+              "title": "Subscribe to our newsletter"
+            }
+          },
+          "footer-2": {
+            "type": "link_list",
+            "settings": {
+              "title": "Quick links",
+              "menu": "footer"
+            }
+          }
+        },
+        "block_order": [
+          "footer-0",
+          "footer-1",
+          "footer-2"
+        ],
+        "settings": {
+          "copyright_text": "All rights reserved.",
+          "show_payment_icons": true
+        }
+      }
+    }
+  }
+} 

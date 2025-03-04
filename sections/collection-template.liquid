@@ -1,0 +1,132 @@
+<div class="collection">
+  <div class="collection__header">
+    <h1 class="collection__title">{{ collection.title }}</h1>
+    
+    {% if collection.description != blank %}
+      <div class="collection__description rte">
+        {{ collection.description }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="collection__toolbar">
+    <div class="collection__product-count">
+      {% if collection.products_count > 0 %}
+        {{ 'collections.general.items_with_count' | t: count: collection.products_count }}
+      {% endif %}
+    </div>
+    
+    <div class="collection__sort">
+      <label for="SortBy" class="collection__sort-label">{{ 'collections.sorting.title' | t }}</label>
+      <select name="sort_by" id="SortBy" class="collection__sort-select">
+        <option value="manual" {% if collection.sort_by == 'manual' %}selected="selected"{% endif %}>
+          {{ 'collections.sorting.featured' | t }}
+        </option>
+        <option value="best-selling" {% if collection.sort_by == 'best-selling' %}selected="selected"{% endif %}>
+          {{ 'collections.sorting.best_selling' | t }}
+        </option>
+        <option value="title-ascending" {% if collection.sort_by == 'title-ascending' %}selected="selected"{% endif %}>
+          {{ 'collections.sorting.az' | t }}
+        </option>
+        <option value="title-descending" {% if collection.sort_by == 'title-descending' %}selected="selected"{% endif %}>
+          {{ 'collections.sorting.za' | t }}
+        </option>
+        <option value="price-ascending" {% if collection.sort_by == 'price-ascending' %}selected="selected"{% endif %}>
+          {{ 'collections.sorting.price_ascending' | t }}
+        </option>
+        <option value="price-descending" {% if collection.sort_by == 'price-descending' %}selected="selected"{% endif %}>
+          {{ 'collections.sorting.price_descending' | t }}
+        </option>
+        <option value="created-descending" {% if collection.sort_by == 'created-descending' %}selected="selected"{% endif %}>
+          {{ 'collections.sorting.date_descending' | t }}
+        </option>
+        <option value="created-ascending" {% if collection.sort_by == 'created-ascending' %}selected="selected"{% endif %}>
+          {{ 'collections.sorting.date_ascending' | t }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="collection__grid">
+    {% if collection.products.size > 0 %}
+      {% for product in collection.products %}
+        <div class="collection__grid-item">
+          {% render 'product-card', product: product %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="collection__empty">
+        <p>{{ 'collections.general.no_matches' | t }}</p>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if paginate.pages > 1 %}
+    <div class="collection__pagination">
+      {{ paginate | default_pagination }}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "Show collection description",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show product count",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sorting",
+      "label": "Show collection sorting",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Grid"
+    },
+    {
+      "type": "range",
+      "id": "grid_columns_desktop",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "grid_columns_mobile",
+      "label": "Columns on mobile",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "default": 2
+    }
+  ]
+}
+{% endschema %} 

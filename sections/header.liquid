@@ -1,0 +1,113 @@
+<div class="header">
+  <div class="header__content">
+    <div class="header__logo-wrapper">
+      <a href="/" class="header__logo-link">
+        {% if section.settings.logo != blank %}
+          <img 
+            src="{{ section.settings.logo | img_url: 'master' }}" 
+            alt="{{ shop.name }}" 
+            class="header__logo"
+            width="{{ section.settings.logo_width }}"
+            loading="lazy"
+          >
+        {% else %}
+          <span class="header__logo-text">{{ shop.name }}</span>
+        {% endif %}
+      </a>
+    </div>
+
+    <nav class="header__nav" role="navigation">
+      <ul class="header__menu">
+        {% for link in section.settings.menu.links %}
+          <li class="header__menu-item">
+            <a href="{{ link.url }}" class="header__menu-link{% if link.active %} header__menu-link--active{% endif %}">
+              {{ link.title }}
+            </a>
+            {% if link.links != blank %}
+              <ul class="header__submenu">
+                {% for childlink in link.links %}
+                  <li class="header__submenu-item">
+                    <a href="{{ childlink.url }}" class="header__submenu-link{% if childlink.active %} header__submenu-link--active{% endif %}">
+                      {{ childlink.title }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <div class="header__icons">
+      <a href="/search" class="header__icon header__icon--search">
+        {% render 'icon-search' %}
+        <span class="visually-hidden">{{ 'general.search.search' | t }}</span>
+      </a>
+      
+      <a href="/account" class="header__icon header__icon--account">
+        {% render 'icon-account' %}
+        <span class="visually-hidden">{{ 'customer.account.title' | t }}</span>
+      </a>
+      
+      <a href="/cart" class="header__icon header__icon--cart">
+        {% render 'icon-cart' %}
+        <span class="visually-hidden">{{ 'cart.general.title' | t }}</span>
+        <span class="header__cart-count" data-cart-count>
+          {{ cart.item_count }}
+        </span>
+      </a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 50,
+      "max": 250,
+      "step": 10,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 100
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Header Style"
+    },
+    {
+      "type": "color",
+      "id": "header_bg",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "header_text",
+      "label": "Text color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header",
+      "category": "Header"
+    }
+  ]
+}
+{% endschema %} 

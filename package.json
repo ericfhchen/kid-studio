@@ -1,0 +1,19 @@
+{
+  "name": "shopify-theme",
+  "version": "1.0.0",
+  "description": "Custom Shopify theme with pure CSS",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "shopify theme push",
+    "watch": "shopify theme dev"
+  },
+  "keywords": [
+    "shopify",
+    "theme"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@shopify/cli": "^3.59.0"
+  }
+} 

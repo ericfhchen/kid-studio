@@ -1,0 +1,185 @@
+{%- assign current_product = product -%}
+{%- assign current_variant = current_product.selected_or_first_available_variant -%}
+
+<div class="product" data-product-id="{{ current_product.id }}">
+  <div class="product__container">
+    <div class="product__media-wrapper">
+      {% if current_product.media.size > 0 %}
+        <div class="product__media-gallery">
+          {% for media in current_product.media %}
+            <div class="product__media-item" data-media-id="{{ media.id }}">
+              {% case media.media_type %}
+                {% when 'image' %}
+                  <div class="product__media product__media--image">
+                    <img
+                      srcset="{% if media.width >= 493 %}{{ media | img_url: '493x' }} 493w,{% endif %}
+                              {% if media.width >= 600 %}{{ media | img_url: '600x' }} 600w,{% endif %}
+                              {% if media.width >= 713 %}{{ media | img_url: '713x' }} 713w,{% endif %}
+                              {% if media.width >= 823 %}{{ media | img_url: '823x' }} 823w,{% endif %}
+                              {% if media.width >= 990 %}{{ media | img_url: '990x' }} 990w,{% endif %}
+                              {% if media.width >= 1100 %}{{ media | img_url: '1100x' }} 1100w,{% endif %}
+                              {% if media.width >= 1206 %}{{ media | img_url: '1206x' }} 1206w,{% endif %}
+                              {% if media.width >= 1346 %}{{ media | img_url: '1346x' }} 1346w,{% endif %}
+                              {% if media.width >= 1426 %}{{ media | img_url: '1426x' }} 1426w,{% endif %}
+                              {% if media.width >= 1646 %}{{ media | img_url: '1646x' }} 1646w,{% endif %}"
+                      src="{{ media | img_url: '823x' }}"
+                      sizes="(min-width: 990px) calc(50vw - 10rem), (min-width: 750px) calc(100vw - 10rem), calc(100vw - 3rem)"
+                      alt="{{ media.alt | escape }}"
+                      loading="lazy"
+                      width="{{ media.width }}"
+                      height="{{ media.height }}"
+                      class="product__media-image"
+                    >
+                  </div>
+                {% when 'external_video' %}
+                  <div class="product__media product__media--external-video">
+                    {{ media | external_video_tag }}
+                  </div>
+                {% when 'video' %}
+                  <div class="product__media product__media--video">
+                    {{ media | video_tag: controls: true }}
+                  </div>
+                {% when 'model' %}
+                  <div class="product__media product__media--model">
+                    {{ media | model_viewer_tag }}
+                  </div>
+              {% endcase %}
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="product__media-item">
+          {{ 'product-1' | placeholder_svg_tag: 'product__media-image placeholder-svg' }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="product__info-wrapper">
+      <div class="product__info">
+        <h1 class="product__title">{{ current_product.title }}</h1>
+        
+        <div class="product__vendor">{{ current_product.vendor }}</div>
+        
+        <div class="product__price">
+          {% if current_product.available %}
+            {% if current_product.compare_at_price_max > current_product.price %}
+              <span class="product__price--sale">{{ current_variant.price | money }}</span>
+              <span class="product__price--regular">{{ current_variant.compare_at_price | money }}</span>
+              <span class="product__price--savings">
+                {% if current_product.compare_at_price_varies %}
+                  {{ 'products.product.save_up_to' | t: amount: current_product.compare_at_price_max | minus: current_product.price | money }}
+                {% else %}
+                  {{ 'products.product.save' | t: amount: current_product.compare_at_price | minus: current_product.price | money }}
+                {% endif %}
+              </span>
+            {% else %}
+              <span class="product__price--regular">{{ current_variant.price | money }}</span>
+            {% endif %}
+          {% else %}
+            <span class="product__price--sold-out">{{ current_variant.price | money }}</span>
+          {% endif %}
+        </div>
+        
+        {% if current_product.description != blank %}
+          <div class="product__description rte">
+            {{ current_product.description }}
+          </div>
+        {% endif %}
+        
+        {% form 'product', current_product, id: 'product-form', class: 'product__form' %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+          
+          {% if current_product.has_only_default_variant == false %}
+            <div class="product__variants">
+              {% for option in current_product.options_with_values %}
+                <div class="product__option">
+                  <label class="product__option-label" for="Option-{{ forloop.index }}">
+                    {{ option.name }}
+                  </label>
+                  
+                  <select
+                    id="Option-{{ forloop.index }}"
+                    class="product__option-select"
+                    name="options[{{ option.name | escape }}]"
+                    data-option-index="{{ forloop.index0 }}"
+                  >
+                    {% for value in option.values %}
+                      <option
+                        value="{{ value | escape }}"
+                        {% if option.selected_value == value %}selected="selected"{% endif %}
+                      >
+                        {{ value }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          
+          <div class="product__quantity">
+            <label class="product__quantity-label" for="Quantity">{{ 'products.product.quantity' | t }}</label>
+            <input
+              type="number"
+              id="Quantity"
+              name="quantity"
+              value="1"
+              min="1"
+              class="product__quantity-input"
+            >
+          </div>
+          
+          <div class="product__submit">
+            <button
+              type="submit"
+              name="add"
+              class="product__add-to-cart"
+              {% unless current_product.available %}disabled{% endunless %}
+            >
+              <span class="product__add-to-cart-text">
+                {% if current_product.available %}
+                  {{ 'products.product.add_to_cart' | t }}
+                {% else %}
+                  {{ 'products.product.sold_out' | t }}
+                {% endif %}
+              </span>
+            </button>
+          </div>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_quantity_selector",
+      "label": "Show quantity selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_zoom",
+      "label": "Enable image zoom",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_payment_button",
+      "label": "Show dynamic checkout button",
+      "info": "Each customer will see their preferred payment method from those available on your store, such as PayPal or Apple Pay. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+      "default": true
+    }
+  ]
+}
+{% endschema %} 
