@@ -155,7 +155,7 @@
   right: 0;
   bottom: 0;
   z-index: 1;
-  padding: 0px 8px;
+  padding: 0px 20px;
 }
 
 .intro-text__year {
@@ -237,8 +237,14 @@
       {% endif %}
     {% endfor %}
   ],
-  "shopDomain": "{{ shop.permanent_domain }}",
-  "fileBaseUrl": "{{ 'image-1.jpg' | file_url | split: 'image-1.jpg' | first }}"
+  "shopFiles": {
+    "url": "{{ shop.url }}"
+  },
+  "fileUrls": [
+    {% for i in (1..50) %}
+      "{{ 'image-' | append: i | append: '.jpg' | file_url }}"{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ]
 }
 </script>
 
@@ -263,9 +269,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const loadingIndicator = document.querySelector('.hover-image-loading');
   let hoverImages = [];
   let isImagesLoaded = false;
-  let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  let isHovering = false;
-  let touchActive = false;
   
   if (!config.hoverEffectEnabled) {
     // Hover effect is disabled - hide relevant elements
@@ -285,76 +288,18 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   // Function to preload hover images
-  function loadHoverImages() {
-    // Check if we have configured images from section blocks
-    if (config.configuredImageUrls && config.configuredImageUrls.length > 0 && 
+  function loadHoverImages() {    
+    // First check if we have uploaded files in the Shopify Files section
+    if (config.fileUrls && config.fileUrls.length > 0) {
+      preloadImages(config.fileUrls);
+    }
+    // If not, check if we have configured images from section blocks
+    else if (config.configuredImageUrls && config.configuredImageUrls.length > 0 && 
         config.configuredImageUrls[0] && config.configuredImageUrls[0].trim() !== '') {
-      // Use configured images from section blocks
       preloadImages(config.configuredImageUrls);
     } else {
-      // Try to find which images are available before loading them
-      findExistingImages();
-    }
-  }
-  
-  // Function to check which images exist and then preload only those
-  function findExistingImages() {
-    if (loadingIndicator) {
-      loadingIndicator.textContent = 'Checking available images...';
-    }
-    
-    // Get the list of images that were successfully uploaded to the Shopify Files section
-    // We'll use a hidden image element to check which images are actually available
-    const testImage = new Image();
-    let existingImages = [];
-    let imageIndex = 1;
-    let checksCompleted = 0;
-    let totalChecks = 30; // We'll check up to 30 images
-    
-    // Update function to call after each check completes
-    function checkComplete() {
-      checksCompleted++;
-      if (loadingIndicator) {
-        loadingIndicator.textContent = `Checking images (${checksCompleted}/${totalChecks})`;
-      }
-      
-      // If we've completed all checks, load the images we found
-      if (checksCompleted >= totalChecks) {
-        if (existingImages.length > 0) {
-          preloadImages(existingImages);
-        } else {
-          disableHoverEffect();
-        }
-      }
-    }
-    
-    // Check for each possible image (1 through 30)
-    for (let i = 1; i <= totalChecks; i++) {
-      checkImageExists(i);
-    }
-    
-    // Function to check if an individual image exists
-    function checkImageExists(index) {
-      const imageUrl = `${config.fileBaseUrl}image-${index}.jpg`;
-      
-      // Create a new temporary image to test if it exists
-      const tempImg = new Image();
-      
-      // Set up load handler
-      tempImg.onload = function() {
-        // Image exists, add it to our list
-        existingImages.push(imageUrl);
-        checkComplete();
-      };
-      
-      // Set up error handler
-      tempImg.onerror = function() {
-        // Image doesn't exist, just mark check as complete
-        checkComplete();
-      };
-      
-      // Start the check by trying to load the image
-      tempImg.src = imageUrl;
+      // No valid images - disable the hover effect
+      disableHoverEffect();
     }
   }
   
@@ -429,6 +374,16 @@ document.addEventListener('DOMContentLoaded', function() {
         updateLoadingProgress();
       };
       
+      // Set timeout for image loading (3 seconds per image)
+      const timeout = setTimeout(() => {
+        if (!img.complete) {
+          img.src = ''; // Cancel the image load
+          loadedCount++;
+          errorCount++;
+          updateLoadingProgress();
+        }
+      }, 3000);
+      
       // Start loading the image
       img.src = url;
     });
@@ -477,130 +432,106 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
-  // Function to hide hover image
-  function hideHoverImage() {
-    if (hoverContainer) {
-      hoverContainer.style.opacity = '0';
-      isHovering = false;
-      touchActive = false;
-    }
-  }
-  
-  // Function to update hover image position and content
-  function updateHoverImage(e) {
-    if ((!isHovering && !touchActive) || !isImagesLoaded || hoverImages.length === 0) return;
-    
-    // Get the position (either mouse or touch)
-    const posX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : null);
-    const posY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : null);
-    
-    // If we don't have a valid position, return
-    if (posX === null || posY === null) return;
-    
-    // Calculate cursor position as percentage of element width
-    const viewportWidth = window.innerWidth;
-    
-    // Calculate the boundaries for the active zone (8% margin on each side)
-    const leftMargin = viewportWidth * 0.08;
-    const rightMargin = viewportWidth * 0.92;
-    
-    let selectedImage;
-    
-    // Check if cursor is within the active middle section of the viewport
-    if (posX < leftMargin) {
-      // Left of the active zone - use the first image
-      selectedImage = hoverImages[0];
-    } else if (posX > rightMargin) {
-      // Right of the active zone - use the last image
-      selectedImage = hoverImages[hoverImages.length - 1];
-    } else {
-      // Inside the active zone - calculate which image to show based on cursor position
-      // Map the cursor position from [leftMargin, rightMargin] to [0, 1]
-      const activeWidth = rightMargin - leftMargin;
-      const xInActiveZone = posX - leftMargin;
-      const xPercent = Math.min(Math.max(xInActiveZone / activeWidth, 0), 1);
-      
-      const imageIndex = Math.floor(xPercent * hoverImages.length);
-      selectedImage = hoverImages[Math.min(imageIndex, hoverImages.length - 1)];
-    }
-    
-    if (selectedImage && selectedImage.src) {
-      // Update hover image source
-      hoverImage.src = selectedImage.src;
-      
-      // Always position the hover container at cursor position regardless of zone
-      // This ensures it follows the cursor even outside of the active zone
-      hoverContainer.style.left = `${posX}px`;
-      hoverContainer.style.top = `${posY}px`;
-      
-      // Make sure the image is visible
-      if (!hoverImage.classList.contains('loaded')) {
-        hoverImage.classList.add('loaded');
-      }
-      
-      // Show the container
-      hoverContainer.style.opacity = '1';
-    }
-  }
-  
   // Load images when page loads
   loadHoverImages();
   
-  // Add appropriate event listeners based on device type
-  if (introTextSection && isImagesLoaded) {
+  // Add mousemove event to track cursor and update image
+  if (introTextSection) {
+    let isHovering = false;
+    
+    // Function to update hover image position and content
+    function updateHoverImage(e) {
+      if (!isHovering || !isImagesLoaded || hoverImages.length === 0) return;
+      
+      // Calculate cursor position as percentage of element width
+      const viewportWidth = window.innerWidth;
+      
+      // Calculate the boundaries for the active zone (8% margin on each side)
+      const leftMargin = viewportWidth * 0.08;
+      const rightMargin = viewportWidth * 0.92;
+      
+      let selectedImage;
+      
+      // Check if cursor is within the active middle section of the viewport
+      if (e.clientX < leftMargin) {
+        // Left of the active zone - use the first image
+        selectedImage = hoverImages[0];
+      } else if (e.clientX > rightMargin) {
+        // Right of the active zone - use the last image
+        selectedImage = hoverImages[hoverImages.length - 1];
+      } else {
+        // Inside the active zone - calculate which image to show based on cursor position
+        // Map the cursor position from [leftMargin, rightMargin] to [0, 1]
+        const activeWidth = rightMargin - leftMargin;
+        const xInActiveZone = e.clientX - leftMargin;
+        const xPercent = Math.min(Math.max(xInActiveZone / activeWidth, 0), 1);
+        
+        const imageIndex = Math.floor(xPercent * hoverImages.length);
+        selectedImage = hoverImages[Math.min(imageIndex, hoverImages.length - 1)];
+      }
+      
+      if (selectedImage && selectedImage.src) {
+        // Update hover image source
+        hoverImage.src = selectedImage.src;
+        
+        // Always position the hover container at cursor position regardless of zone
+        // This ensures it follows the cursor even outside of the active zone
+        hoverContainer.style.left = `${e.clientX}px`;
+        hoverContainer.style.top = `${e.clientY}px`;
+        
+        // Make sure the image is visible
+        if (!hoverImage.classList.contains('loaded')) {
+          hoverImage.classList.add('loaded');
+        }
+      }
+    }
+    
+    // Set up event listeners
     try {
-      // Mouse event listeners (desktop)
       introTextSection.addEventListener('mouseenter', function() {
-        if (!isImagesLoaded || isTouchDevice) return;
-        isHovering = true;
-      });
-      
-      introTextSection.addEventListener('mousemove', function(e) {
-        if (isTouchDevice) return; // Don't handle mousemove on touch devices
-        updateHoverImage(e);
-      });
-      
-      introTextSection.addEventListener('mouseleave', function() {
-        if (isTouchDevice) return;
-        hideHoverImage();
-      });
-      
-      // Touch event listeners (mobile)
-      introTextSection.addEventListener('touchstart', function(e) {
         if (!isImagesLoaded) return;
-        touchActive = true;
-        updateHoverImage(e);
-      }, { passive: true });
-      
-      introTextSection.addEventListener('touchmove', function(e) {
-        if (!isImagesLoaded || !touchActive) return;
-        updateHoverImage(e);
-      }, { passive: true });
-      
-      introTextSection.addEventListener('touchend', function() {
-        hideHoverImage();
-      });
-      
-      introTextSection.addEventListener('touchcancel', function() {
-        hideHoverImage();
-      });
-      
-      // Global events to ensure hover image disappears when interacting elsewhere
-      document.addEventListener('scroll', function() {
-        if (touchActive) hideHoverImage();
-      }, { passive: true });
-      
-      document.addEventListener('click', function(e) {
-        if (!introTextSection.contains(e.target)) {
-          hideHoverImage();
+        isHovering = true;
+        if (hoverImages.length > 0) {
+          hoverContainer.style.opacity = '1';
         }
       });
       
-      document.addEventListener('touchstart', function(e) {
-        if (!introTextSection.contains(e.target)) {
-          hideHoverImage();
+      // Add event listeners for mouse movement
+      introTextSection.addEventListener('mousemove', updateHoverImage);
+      
+      // Prevent click from affecting the hover behavior
+      introTextSection.addEventListener('mousedown', function(e) {
+        if (!isImagesLoaded) return;
+        // Don't let the click affect our hover state
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Make sure hover effect continues after click
+        updateHoverImage(e);
+        return false;
+      });
+      
+      // Re-enable hover on mouseup to ensure it continues working after click
+      introTextSection.addEventListener('mouseup', function(e) {
+        if (!isImagesLoaded) return;
+        updateHoverImage(e);
+      });
+      
+      // Ensure hover continues working after click
+      introTextSection.addEventListener('click', function(e) {
+        if (!isImagesLoaded) return;
+        e.preventDefault();
+        updateHoverImage(e);
+        return false;
+      });
+      
+      // Hide the hover image when mouse leaves the section
+      introTextSection.addEventListener('mouseleave', function() {
+        isHovering = false;
+        if (hoverContainer) {
+          hoverContainer.style.opacity = '0';
         }
-      }, { passive: true });
+      });
     } catch (error) {
       // Keep only critical error logging
       console.error('Error in hover effect:', error.message);
