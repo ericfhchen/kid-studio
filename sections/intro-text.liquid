@@ -215,6 +215,7 @@
 
   .intro-text__year {
     font-size: 0.75rem;
+    padding: 0px 8px;
   }
   
   /* Set max width of 150px for mobile devices */
@@ -269,6 +270,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const loadingIndicator = document.querySelector('.hover-image-loading');
   let hoverImages = [];
   let isImagesLoaded = false;
+  let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 
+                 (window.matchMedia && window.matchMedia('(max-width: 768px)').matches);
+  let hideTimeout = null;
   
   if (!config.hoverEffectEnabled) {
     // Hover effect is disabled - hide relevant elements
@@ -285,6 +289,37 @@ document.addEventListener('DOMContentLoaded', function() {
       loadingIndicator.style.display = 'none';
     }
     isImagesLoaded = false;
+  }
+  
+  // Function to hide the hover image
+  function hideHoverImage() {
+    if (hideTimeout) {
+      clearTimeout(hideTimeout);
+      hideTimeout = null;
+    }
+    
+    isHovering = false;
+    if (hoverContainer) {
+      hoverContainer.style.opacity = '0';
+    }
+  }
+  
+  // Function to show and automatically hide the hover image on mobile
+  function showAndAutoHideHoverImage() {
+    if (isMobile && isImagesLoaded && hoverImages.length > 0) {
+      // Clear any existing timeout to avoid multiple timers
+      if (hideTimeout) {
+        clearTimeout(hideTimeout);
+      }
+      
+      // Show the hover image
+      hoverContainer.style.opacity = '1';
+      
+      // Set a timeout to hide it after 2 seconds
+      hideTimeout = setTimeout(function() {
+        hideHoverImage();
+      }, 2000);
+    }
   }
   
   // Function to preload hover images
@@ -441,10 +476,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to update hover image position and content
     function updateHoverImage(e) {
-      if (!isHovering || !isImagesLoaded || hoverImages.length === 0) return;
+      if (!isImagesLoaded || hoverImages.length === 0) return;
+      
+      // For mobile, we always update the position regardless of hover state
+      // For desktop, we check if the hover state is active
+      if (!isMobile && !isHovering) return;
       
       // Calculate cursor position as percentage of element width
       const viewportWidth = window.innerWidth;
+      
+      // Get coordinates (either touch or mouse)
+      const posX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+      const posY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : null);
+      
+      if (!posX || !posY) return;
       
       // Calculate the boundaries for the active zone (8% margin on each side)
       const leftMargin = viewportWidth * 0.08;
@@ -453,17 +498,17 @@ document.addEventListener('DOMContentLoaded', function() {
       let selectedImage;
       
       // Check if cursor is within the active middle section of the viewport
-      if (e.clientX < leftMargin) {
+      if (posX < leftMargin) {
         // Left of the active zone - use the first image
         selectedImage = hoverImages[0];
-      } else if (e.clientX > rightMargin) {
+      } else if (posX > rightMargin) {
         // Right of the active zone - use the last image
         selectedImage = hoverImages[hoverImages.length - 1];
       } else {
         // Inside the active zone - calculate which image to show based on cursor position
         // Map the cursor position from [leftMargin, rightMargin] to [0, 1]
         const activeWidth = rightMargin - leftMargin;
-        const xInActiveZone = e.clientX - leftMargin;
+        const xInActiveZone = posX - leftMargin;
         const xPercent = Math.min(Math.max(xInActiveZone / activeWidth, 0), 1);
         
         const imageIndex = Math.floor(xPercent * hoverImages.length);
@@ -476,18 +521,23 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Always position the hover container at cursor position regardless of zone
         // This ensures it follows the cursor even outside of the active zone
-        hoverContainer.style.left = `${e.clientX}px`;
-        hoverContainer.style.top = `${e.clientY}px`;
+        hoverContainer.style.left = `${posX}px`;
+        hoverContainer.style.top = `${posY}px`;
         
         // Make sure the image is visible
         if (!hoverImage.classList.contains('loaded')) {
           hoverImage.classList.add('loaded');
         }
+        
+        // On mobile, trigger auto-hide
+        if (isMobile) {
+          showAndAutoHideHoverImage();
+        }
       }
     }
     
-    // Set up event listeners
-    try {
+    // Set up desktop event listeners
+    if (!isMobile) {
       introTextSection.addEventListener('mouseenter', function() {
         if (!isImagesLoaded) return;
         isHovering = true;
@@ -499,6 +549,45 @@ document.addEventListener('DOMContentLoaded', function() {
       // Add event listeners for mouse movement
       introTextSection.addEventListener('mousemove', updateHoverImage);
       
+      // Hide the hover image when mouse leaves the section
+      introTextSection.addEventListener('mouseleave', function() {
+        hideHoverImage();
+      });
+    } 
+    // Set up mobile event listeners
+    else {
+      // Touch events for mobile
+      introTextSection.addEventListener('touchstart', function(e) {
+        if (!isImagesLoaded) return;
+        isHovering = true;
+        updateHoverImage(e);
+      }, { passive: true });
+      
+      introTextSection.addEventListener('touchmove', function(e) {
+        if (!isImagesLoaded) return;
+        updateHoverImage(e);
+      }, { passive: true });
+      
+      // Global events to hide hover image when clicking or scrolling
+      document.addEventListener('click', function(e) {
+        if (!introTextSection.contains(e.target)) {
+          hideHoverImage();
+        }
+      });
+      
+      document.addEventListener('touchstart', function(e) {
+        if (!introTextSection.contains(e.target)) {
+          hideHoverImage();
+        }
+      }, { passive: true });
+      
+      window.addEventListener('scroll', function() {
+        hideHoverImage();
+      }, { passive: true });
+    }
+    
+    // Desktop click event handlers
+    if (!isMobile) {
       // Prevent click from affecting the hover behavior
       introTextSection.addEventListener('mousedown', function(e) {
         if (!isImagesLoaded) return;
@@ -524,17 +613,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateHoverImage(e);
         return false;
       });
-      
-      // Hide the hover image when mouse leaves the section
-      introTextSection.addEventListener('mouseleave', function() {
-        isHovering = false;
-        if (hoverContainer) {
-          hoverContainer.style.opacity = '0';
-        }
-      });
-    } catch (error) {
-      // Keep only critical error logging
-      console.error('Error in hover effect:', error.message);
     }
   }
 });
