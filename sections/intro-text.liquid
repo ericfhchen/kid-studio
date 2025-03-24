@@ -267,20 +267,13 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (!config.hoverEffectEnabled) {
     // Hover effect is disabled - hide relevant elements
-    disableHoverEffect();
-    return; // Exit early
-  }
-  
-  // Function to completely disable the hover effect
-  function disableHoverEffect() {
     if (hoverContainer) {
       hoverContainer.style.display = 'none';
     }
     if (loadingIndicator) {
       loadingIndicator.style.display = 'none';
     }
-    isImagesLoaded = false;
-    console.log('Hover effect disabled - no valid images found.');
+    return; // Exit early
   }
   
   // Function to preload hover images
@@ -291,8 +284,16 @@ document.addEventListener('DOMContentLoaded', function() {
       // Use configured images from section blocks
       preloadImages(config.configuredImageUrls);
     } else {
-      // No valid images - disable the hover effect
-      disableHoverEffect();
+      // Fallback to placeholder images from a public source
+      const placeholderUrls = [];
+      
+      // Use placeholder images that will definitely work
+      for (let i = 1; i <= 10; i++) {
+        placeholderUrls.push(`https://picsum.photos/seed/${i}/300/300`);
+      }
+      
+      console.log('Using placeholder images (no valid files found)');
+      preloadImages(placeholderUrls);
     }
   }
   
@@ -324,7 +325,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle empty array case
     if (!imageUrls || imageUrls.length === 0) {
       console.log('No hover images found.');
-      disableHoverEffect();
+      if (loadingIndicator) {
+        loadingIndicator.textContent = 'No hover images available';
+        loadingIndicator.classList.add('hidden');
+      }
       return;
     }
     
@@ -388,9 +392,50 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         }
       } else {
-        console.log('No hover images could be loaded. Disabling hover effect.');
-        disableHoverEffect();
+        console.log('No hover images could be loaded. Creating fallback images.');
+        
+        // Create fallback images if none loaded
+        createFallbackImages();
       }
+    }
+    
+    // Create fallback images if none could be loaded
+    function createFallbackImages() {
+      // Create 10 simple SVGs with different colors as fallback
+      const colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33F3', '#33FFF3', '#FF9933', '#3399FF', '#FF3393', '#93FF33'];
+      
+      for (let i = 0; i < 10; i++) {
+        // Create a simple colored SVG
+        const svgImage = new Image();
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+          <rect width="100%" height="100%" fill="${colors[i]}" />
+          <text x="50%" y="50%" font-family="Arial" font-size="24" fill="white" text-anchor="middle" dominant-baseline="middle">Image ${i+1}</text>
+        </svg>`;
+        
+        // Convert SVG to data URL
+        const svgBlob = new Blob([svg], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(svgBlob);
+        
+        svgImage.onload = function() {
+          hoverImages[i] = this;
+          
+          // Show first image when it's ready
+          if (i === 0 && hoverImage) {
+            hoverImage.src = this.src;
+            hoverImage.classList.add('loaded');
+            isImagesLoaded = true;
+            
+            // Hide loading indicator
+            if (loadingIndicator) {
+              loadingIndicator.classList.add('hidden');
+            }
+          }
+        };
+        
+        svgImage.src = url;
+      }
+      
+      console.log('Created 10 fallback images');
     }
   }
   
@@ -398,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
   loadHoverImages();
   
   // Update container size from settings - respects CSS media queries with !important
-  if (hoverContainer && isImagesLoaded) {
+  if (hoverContainer) {
     // On desktop, use the configuration value
     // Media queries will override this with !important for tablets and mobile
     hoverContainer.style.width = `${config.hoverImageWidth}px`;
@@ -461,9 +506,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     introTextSection.addEventListener('mouseenter', function() {
-      if (!isImagesLoaded) return;
       isHovering = true;
-      if (hoverImages.filter(img => img && img.src).length > 0) {
+      if (isImagesLoaded && hoverImages.filter(img => img && img.src).length > 0) {
         hoverContainer.style.opacity = '1';
       }
     });
@@ -473,7 +517,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Prevent click from affecting the hover behavior
     introTextSection.addEventListener('mousedown', function(e) {
-      if (!isImagesLoaded) return;
       // Don't let the click affect our hover state
       e.preventDefault();
       e.stopPropagation();
@@ -485,13 +528,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Re-enable hover on mouseup to ensure it continues working after click
     introTextSection.addEventListener('mouseup', function(e) {
-      if (!isImagesLoaded) return;
       updateHoverImage(e);
     });
     
     // Ensure hover continues working after click
     introTextSection.addEventListener('click', function(e) {
-      if (!isImagesLoaded) return;
       e.preventDefault();
       updateHoverImage(e);
       return false;
@@ -500,9 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Hide the hover image when mouse leaves the section
     introTextSection.addEventListener('mouseleave', function() {
       isHovering = false;
-      if (hoverContainer) {
-        hoverContainer.style.opacity = '0';
-      }
+      hoverContainer.style.opacity = '0';
     });
   }
 });
