@@ -271,3 +271,66 @@ a:hover {
 .px-3 { padding-left: 1.5rem; padding-right: 1.5rem; }
 .px-4 { padding-left: 2rem; padding-right: 2rem; }
 .px-5 { padding-left: 2.5rem; padding-right: 2.5rem; }
+
+/* Mobile Safari Form Resets */
+/* Fix for blue styling on mobile Safari */
+input,
+button,
+select,
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  color: inherit;
+}
+
+/* Specifically target cart elements */
+.cart-toggle,
+.cart__item-remove,
+.cart__item-quantity-decrease,
+.cart__item-quantity-increase,
+.cart__item-quantity-input,
+.cart__checkout {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  color: #000000;
+  background-color: transparent;
+  border-radius: 0;
+}
+
+/* Fix for iOS styling of buttons with taps */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  background-color: transparent;
+  color: inherit;
+}
+
+/* Fix for iOS styling of inputs */
+input[type="number"],
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+input[type="search"],
+input[type="url"],
+textarea {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  color: inherit;
+}
+
+/* Remove iOS rounded corners on inputs */
+input[type="search"] {
+  -webkit-appearance: none;
+}
+
+/* Remove spinner from number inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
