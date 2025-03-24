@@ -297,13 +297,12 @@ document.addEventListener('DOMContentLoaded', function() {
           if (urlParts.length > 0) {
             const baseUrl = urlParts[0]; // This will be everything before "image-1.jpg"
             
-            // Generate URLs for image-1.jpg through image-4.jpg (reduced number to avoid 404s)
-            // Adjust this number based on how many images you actually have uploaded
-            for (let i = 1; i <= 4; i++) {
+            // Generate URLs for image-1.jpg through image-50.jpg
+            for (let i = 1; i <= 50; i++) {
               shopifyFilesUrls.push(`${baseUrl}image-${i}.jpg`);
             }
             
-            console.log('Using Shopify Files section images');
+            console.log('Using Shopify Files section images with pattern:', baseUrl + 'image-N.jpg');
             preloadImages(shopifyFilesUrls);
           } else {
             console.error('Could not parse default file URL pattern');
@@ -355,9 +354,10 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
+    console.log('Attempting to load images from URLs:', imageUrls);
+    
     // Preload all images
     let loadedCount = 0;
-    let errorCount = 0;
     
     imageUrls.forEach((url, index) => {
       if (!url) {
@@ -375,49 +375,75 @@ document.addEventListener('DOMContentLoaded', function() {
           loadingIndicator.textContent = `Loading: ${Math.floor((loadedCount / imageUrls.length) * 100)}%`;
         }
         
-        if (loadedCount + errorCount === imageUrls.length) {
-          finishLoading();
+        if (loadedCount === imageUrls.length) {
+          // Check if any images were loaded successfully
+          const validImages = hoverImages.filter(Boolean);
+          isImagesLoaded = validImages.length > 0;
+          
+          if (isImagesLoaded) {
+            console.log('All hover images loaded successfully.');
+            
+            // Hide loading indicator
+            if (loadingIndicator) {
+              loadingIndicator.classList.add('hidden');
+            }
+            
+            // Show first image
+            if (hoverImage) {
+              const firstImage = getValidImage(0);
+              if (firstImage && firstImage.src) {
+                hoverImage.src = firstImage.src;
+                hoverImage.classList.add('loaded');
+              } else {
+                console.error('No valid first image found');
+              }
+            }
+          } else {
+            console.error('No images loaded successfully');
+            showErrorMessage('Failed to load any images');
+          }
         }
       };
       img.onerror = function() {
         loadedCount++;
-        errorCount++;
-        // Silent error handling to reduce console noise
+        console.error(`Failed to load image: ${url}`);
         
-        if (loadedCount + errorCount === imageUrls.length) {
-          finishLoading();
+        // Update loading indicator
+        if (loadingIndicator) {
+          loadingIndicator.textContent = `Loading: ${Math.floor((loadedCount / imageUrls.length) * 100)}%`;
+        }
+        
+        if (loadedCount === imageUrls.length) {
+          // Check if any images were loaded successfully
+          const validImages = hoverImages.filter(Boolean);
+          isImagesLoaded = validImages.length > 0;
+          
+          if (isImagesLoaded) {
+            console.log('Some hover images loaded successfully.');
+            
+            // Hide loading indicator
+            if (loadingIndicator) {
+              loadingIndicator.classList.add('hidden');
+            }
+            
+            // Show first image
+            if (hoverImage) {
+              const firstImage = getValidImage();
+              if (firstImage && firstImage.src) {
+                hoverImage.src = firstImage.src;
+                hoverImage.classList.add('loaded');
+              } else {
+                console.error('No valid images found');
+              }
+            }
+          } else {
+            console.log('No hover images could be loaded.');
+            showErrorMessage('Failed to load images');
+          }
         }
       };
       img.src = url;
     });
-    
-    // Centralized function to handle loading completion
-    function finishLoading() {
-      // Check if any images were loaded successfully
-      const validImages = hoverImages.filter(Boolean);
-      isImagesLoaded = validImages.length > 0;
-      
-      if (isImagesLoaded) {
-        console.log(`Loaded ${validImages.length} hover images successfully.`);
-        
-        // Hide loading indicator
-        if (loadingIndicator) {
-          loadingIndicator.classList.add('hidden');
-        }
-        
-        // Show first image
-        if (hoverImage) {
-          const firstImage = getValidImage(0);
-          if (firstImage && firstImage.src) {
-            hoverImage.src = firstImage.src;
-            hoverImage.classList.add('loaded');
-          }
-        }
-      } else {
-        console.log('No hover images could be loaded.');
-        showErrorMessage('Failed to load images');
-      }
-    }
   }
   
   // Load images when page loads
@@ -444,6 +470,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (validImages.length === 0) return;
       
       // Calculate cursor position as percentage of element width
+      const rect = introTextSection.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
       
       // Calculate the boundaries for the 90% active zone (5% margin on each side)
@@ -452,7 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       let selectedImage;
       
-      // Check if cursor is within the active middle section of the viewport
+      // Check if cursor is within the 90% middle section of the viewport
       if (e.clientX < leftMargin) {
         // Left of the active zone - use the first image
         selectedImage = validImages[0];
@@ -475,7 +502,7 @@ document.addEventListener('DOMContentLoaded', function() {
         hoverImage.src = selectedImage.src;
         
         // Always position the hover container at cursor position regardless of zone
-        // This ensures it follows the cursor even outside of the active zone
+        // This ensures it follows the cursor even outside of the 90% zone
         hoverContainer.style.left = `${e.clientX}px`;
         hoverContainer.style.top = `${e.clientY}px`;
         
