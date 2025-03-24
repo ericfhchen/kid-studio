@@ -234,6 +234,10 @@ a:hover {
   .collection__grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .container {
+    padding: 8px;
+  }
 }
 
 @media (max-width: 480px) {
