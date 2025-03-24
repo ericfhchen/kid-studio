@@ -1,65 +1,28 @@
-<div class="header">
-  <div class="header__content">
-    <div class="header__logo-wrapper">
+<header class="header">
+  <div class="header__container">
+    <div class="header__logo">
       <a href="/" class="header__logo-link">
         {% if section.settings.logo != blank %}
-          <img 
-            src="{{ section.settings.logo | img_url: 'master' }}" 
-            alt="{{ shop.name }}" 
-            class="header__logo"
-            width="{{ section.settings.logo_width }}"
-            loading="lazy"
-          >
+          <img src="{{ section.settings.logo | img_url: 'master' }}" alt="{{ shop.name }}" class="header__logo-image" width="100" height="50">
         {% else %}
           <span class="header__logo-text">{{ shop.name }}</span>
         {% endif %}
       </a>
     </div>
-
-    <nav class="header__nav" role="navigation">
+    
+    <nav class="header__nav">
       <ul class="header__menu">
         {% for link in section.settings.menu.links %}
           <li class="header__menu-item">
             <a href="{{ link.url }}" class="header__menu-link{% if link.active %} header__menu-link--active{% endif %}">
               {{ link.title }}
             </a>
-            {% if link.links != blank %}
-              <ul class="header__submenu">
-                {% for childlink in link.links %}
-                  <li class="header__submenu-item">
-                    <a href="{{ childlink.url }}" class="header__submenu-link{% if childlink.active %} header__submenu-link--active{% endif %}">
-                      {{ childlink.title }}
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% endif %}
           </li>
         {% endfor %}
       </ul>
     </nav>
-
-    <div class="header__icons">
-      <a href="/search" class="header__icon header__icon--search">
-        {% render 'icon-search' %}
-        <span class="visually-hidden">{{ 'general.search.search' | t }}</span>
-      </a>
-      
-      <a href="/account" class="header__icon header__icon--account">
-        {% render 'icon-account' %}
-        <span class="visually-hidden">{{ 'customer.account.title' | t }}</span>
-      </a>
-      
-      <a href="/cart" class="header__icon header__icon--cart">
-        {% render 'icon-cart' %}
-        <span class="visually-hidden">{{ 'cart.general.title' | t }}</span>
-        <span class="header__cart-count" data-cart-count>
-          {{ cart.item_count }}
-        </span>
-      </a>
-    </div>
   </div>
-</div>
+</header>
 
 {% schema %}
 {
@@ -68,39 +31,13 @@
     {
       "type": "image_picker",
       "id": "logo",
-      "label": "Logo image"
-    },
-    {
-      "type": "range",
-      "id": "logo_width",
-      "min": 50,
-      "max": 250,
-      "step": 10,
-      "unit": "px",
-      "label": "Logo width",
-      "default": 100
+      "label": "Logo"
     },
     {
       "type": "link_list",
       "id": "menu",
       "label": "Menu",
       "default": "main-menu"
-    },
-    {
-      "type": "header",
-      "content": "Header Style"
-    },
-    {
-      "type": "color",
-      "id": "header_bg",
-      "label": "Background color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "header_text",
-      "label": "Text color",
-      "default": "#000000"
     }
   ],
   "presets": [
@@ -110,4 +47,72 @@
     }
   ]
 }
-{% endschema %} 
+{% endschema %}
+
+{% stylesheet %}
+.header {
+  padding: 20px 0;
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header__logo {
+  flex: 0 0 auto;
+}
+
+.header__logo-link {
+  display: block;
+  text-decoration: none;
+}
+
+.header__logo-image {
+  max-height: 50px;
+  width: auto;
+}
+
+.header__logo-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
+}
+
+.header__nav {
+  flex: 1 1 auto;
+  margin: 0 20px;
+}
+
+.header__menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.header__menu-item {
+  margin: 0 15px;
+}
+
+.header__menu-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.header__menu-link:hover,
+.header__menu-link--active {
+  color: #000;
+}
+{% endstylesheet %} 

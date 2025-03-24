@@ -1,0 +1,73 @@
+<div class="product-hero">
+  <div class="container">
+    <div class="product-hero__content">
+      <div class="product-hero__image-container">
+          <img 
+            src="https://cdn.shopify.com/s/files/1/0744/8844/7222/files/kid10-book-product-photo-placeholder.jpg?v=1742002464" 
+            alt="{{ section.settings.image.alt | escape }}"
+            class="product-hero__image"
+            loading="lazy"
+          >
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Product Image"
+    },
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Featured Product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Hero",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+.product-hero {
+  
+}
+
+.product-hero__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-hero__image-container {
+  width: 60%;
+  margin: 0 auto;
+}
+
+.product-hero__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .product-hero {
+    
+  }
+
+  .product-hero__image-container {
+  width: 100%;
+  margin: 0 auto;
+  }
+  
+}
+{% endstylesheet %} 

@@ -1,11 +1,11 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Custom Theme",
+    "theme_name": "KID10 SHOP",
     "theme_version": "1.0.0",
-    "theme_author": "Your Name",
-    "theme_documentation_url": "",
-    "theme_support_url": ""
+    "theme_author": "LEFT",
+    "theme_documentation_url": "https://left.systems",
+    "theme_support_url": "https://left.systems"
   },
   {
     "name": "Colors",

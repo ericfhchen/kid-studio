@@ -1,0 +1,104 @@
+<div class="publishing-credits">
+  <div class="publishing-credits__content">
+    <div class="publishing-credits__text">
+      PUBLISHING CREDITS. Kid. Studio ©2025. Designed by Alex Doe. Produced by Jordan Smith. Editing by Taylor Lee. Featuring contributions from 30 contributors, including Chris Brown, Jamie Fox, Morgan Reed, Sam Carter, Riley Adams, Jordan Blake, Taylor Hill, Alex Kim, Cameron White, Avery Scott, Devon James, Drew Morgan, Casey Bennett, Logan West, Peyton Gray, Sydney Clark, Blake Harper, Jesse Lane, Dylan Fox, Quinn Brooks, Reese Parker, Skylar Collins, Corey Bell, Alex Rivera, Jamie Stone, Robin Myers, Cameron Dawson, Tyler Green, Hayden Fisher, and Riley Moore.
+      <br>
+      <br>
+      Website by <span><a href="https://left.systems" target="_blank">LEFT</a></span>.
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Publishing Credits",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Publishing Credits"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "credit",
+      "name": "Credit",
+      "settings": [
+        {
+          "type": "text",
+          "id": "role",
+          "label": "Role",
+          "default": "Photography"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "John Doe"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Publishing Credits",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "credit"
+        },
+        {
+          "type": "credit"
+        },
+        {
+          "type": "credit"
+        },
+        {
+          "type": "credit"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+.publishing-credits {
+  padding: 20px;
+  font-family: 'Panama Monospace', monospace;
+  font-size: 4rem;
+  text-align: left;
+}
+
+.publishing-credits__content {
+  margin: 0 auto;
+}
+
+.publishing-credits__text span a {
+  text-decoration: none;
+  color: #000;
+}
+
+.publishing-credits__text span a:hover {
+  animation: blink 0.1s linear infinite;
+}
+
+@media (max-width: 1400px) {
+  .publishing-credits {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .publishing-credits {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .publishing-credits {
+    font-size: 1.5rem;
+  }
+}
+{% endstylesheet %} 

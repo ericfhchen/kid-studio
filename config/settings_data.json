@@ -16,10 +16,8 @@
       "header": {
         "type": "header",
         "settings": {
-          "logo_width": 100,
-          "menu": "main-menu",
-          "header_bg": "#ffffff",
-          "header_text": "#000000"
+          "logo": "",
+          "menu": "main-menu"
         }
       },
       "footer": {

@@ -1,0 +1,89 @@
+<div class="policies">
+  <div class="policies__content">
+    <p class="shipping-policy">
+      SHIPPING & RETURNS. We ship worldwide from our studio. All orders are processed within 3-5 business days, excluding weekends and holidays. Once your order is shipped, you will receive a confirmation email with tracking information. Shipping Rates & Delivery Times. Domestic (within Canada): Standard shipping takes 3-7 business days. Expedited options available at checkout. International: Delivery times vary by location but typically take 7-21 business days. Customs processing may cause delays beyond our control. Duties & Taxes: International customers are responsible for any customs fees or duties incurred upon delivery. We are not responsible for lost, stolen, or delayed packages once they are in the carrier’s possession. Please contact the shipping provider for any delivery concerns. RETURNS & EXCHANGES. We accept returns and exchanges within 14 days of delivery for items in unworn, original condition with all tags attached. To initiate a return, email info@kidstudio.co with your order number and reason for return. Wait for confirmation and return instructions. Ship the item back to us at your expense. We recommend using a trackable service. Once received and inspected, refunds will be processed to the original payment method within 5-7 business days. Shipping fees are non-refundable.
+    </p>
+    <br>
+    <p class="privacy-policy">
+      PRIVACY POLICY. At Kid. Studio, we value your privacy and are committed to protecting your personal data. This policy outlines how we collect, use, and safeguard your information when you visit our website. INFORMATION WE COLLECT. Personal Information. Name, email, shipping/billing address, phone number, and payment details. Automatically Collected Data. IP address, browser type, and site usage analytics. Cookies & Tracking Technologies. We use cookies to enhance user experience and improve our services. How We Use Our Information. We use your data to: Process and fulfill orders. Communicate updates about your purchase. Improve our website and services Prevent fraud and secure transactions. We do not sell or share your personal data with third parties for marketing purposes. DATA SECURITY. We implement industry-standard security measures to protect your information. However, no online transmission is 100% secure, so please shop with confidence but remain mindful. YOUR RIGHTS. You may request access, corrections, or deletion of your data by contacting us at info@kidstudio.co. You can also opt out of marketing emails at any time. CONTACT US. For any questions regarding shipping, returns, or privacy, reach out to info@kidstudio.co.
+    </p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Policies",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Policies"
+    },
+    {
+      "type": "text",
+      "id": "shipping_tab_label",
+      "label": "Shipping Tab Label",
+      "default": "Shipping Policy"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_policy",
+      "label": "Shipping Policy Content",
+      "default": "<p>Enter your shipping policy details here.</p>"
+    },
+    {
+      "type": "text",
+      "id": "privacy_tab_label",
+      "label": "Privacy Tab Label",
+      "default": "Privacy Policy"
+    },
+    {
+      "type": "richtext",
+      "id": "privacy_policy",
+      "label": "Privacy Policy Content",
+      "default": "<p>Enter your privacy policy details here.</p>"
+    },
+    {
+      "type": "text",
+      "id": "returns_tab_label",
+      "label": "Returns Tab Label",
+      "default": "Returns & Refunds"
+    },
+    {
+      "type": "richtext",
+      "id": "returns_policy",
+      "label": "Returns Policy Content",
+      "default": "<p>Enter your returns and refunds policy details here.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Policies",
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+.policies {
+  font-size: 0.75rem;
+  line-height: 1.1;
+  padding: 0 20px 20px 20px;
+  letter-spacing: 0rem;
+}
+
+.policies__content {
+  margin: 0 auto;
+}
+
+
+@media (max-width: 768px) {
+  .policies {
+    padding: 0rem 20px;
+    font-size: 0.65rem;
+  }
+  
+}
+{% endstylesheet %}

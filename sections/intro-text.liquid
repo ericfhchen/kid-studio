@@ -1,0 +1,509 @@
+<div class="intro-text">
+  {% comment %} Add hover image container that will follow cursor {% endcomment %}
+  <div class="hover-image-container">
+    <div class="hover-image-loading">Loading hover images...</div>
+    <img class="hover-image" src="" alt="Hover Image">
+  </div>
+  
+  <div class="intro-text__years">
+      <div class="intro-text__year">2015</div>
+      <div class="intro-text__year">2025</div>
+  </div>
+  <div class="container">
+    <div class="intro-text__content">
+      {% if section.settings.heading != blank %}
+        <h2 class="intro-text__heading"><span class="panama">GOD BLESS TORONTO</span><br> COMMEMORATES THE 10 YEAR ANNIVERSARY OF Kid.</h2>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Intro Text",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "GOD BLESS TORONTO commemorates the 10 year anniversary of Kid."
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text content",
+      "default": "<p>Add your introductory text here. This section can be used to introduce your brand, products, or the specific collection featured on this page.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Hover Effect Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_effect",
+      "label": "Enable Hover Image Effect",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hover_image_width",
+      "min": 100,
+      "max": 500,
+      "step": 10,
+      "default": 300,
+      "label": "Hover Image Width (px)",
+      "info": "Width of the image that follows the cursor"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hover_image",
+      "name": "Hover Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Intro Text",
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+.intro-text {
+  padding: 8rem 0;
+  position: relative;
+}
+
+/* Hover image styling */
+.hover-image-container {
+  position: fixed; /* Use fixed positioning instead of absolute */
+  width: 300px;
+  height: auto;
+  pointer-events: none; /* Ensure it doesn't interfere with hover events */
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.05s linear;
+  z-index: 100;
+  transform: translate(-50%, -50%); /* This centers the container on the cursor */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.hover-image.loaded {
+  opacity: 1;
+}
+
+.hover-image-loading {
+  position: absolute;
+  font-family: 'Panama Monospace', monospace;
+  font-size: 14px;
+  color: #000;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 5px 10px;
+  border-radius: 4px;
+  z-index: 101;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.hover-image-loading.hidden {
+  opacity: 0;
+}
+
+.intro-text__content {
+  max-width: 40%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.intro-text__heading {
+  font-size: 4rem;
+  font-weight: bold;
+}
+
+.intro-text__body {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.intro-text__years {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  padding: 0px 20px;
+}
+
+.intro-text__year {
+  font-size: 3rem;
+}
+
+.panama {
+  font-family: 'Panama Monospace', monospace;
+}
+
+@media (max-width: 1400px) {
+  .intro-text__year {
+    font-size: 2rem;
+  }
+
+  .intro-text__heading {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .intro-text__year {
+    font-size: 1.5rem;
+  }
+
+  .intro-text__heading {
+    font-size: 2rem;
+  }
+  
+  /* Reduce hover image size for tablets */
+  .hover-image-container {
+    width: 200px !important;
+    height: 200px !important;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .intro-text {
+    padding: 2rem 0;
+  }
+
+  .intro-text__content {
+    width: 70%;
+    max-width: 70%;
+  }
+  
+  .intro-text__heading {
+    font-size: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .intro-text__body {
+    
+  }
+
+  .intro-text__year {
+    font-size: 0.75rem;
+  }
+  
+  /* Set max width of 150px for mobile devices */
+  .hover-image-container {
+    width: 150px !important;
+    height: 150px !important;
+  }
+}
+{% endstylesheet %}
+
+{% comment %} First define a data object with all configuration from Liquid {% endcomment %}
+<script type="application/json" id="intro-text-config">
+{
+  "hoverEffectEnabled": {{ section.settings.enable_hover_effect | json }},
+  "hoverImageWidth": {{ section.settings.hover_image_width | default: 300 | json }},
+  "configuredImageUrls": [
+    {% for block in section.blocks %}
+      {% if block.type == 'hover_image' and block.settings.image != blank %}
+        "{{ block.settings.image | img_url: 'master' }}"{% unless forloop.last %},{% endunless %}
+      {% endif %}
+    {% endfor %}
+  ],
+  "shopFiles": {
+    "url": "{{ shop.url }}"
+  },
+  "defaultFile": "{{ 'image-1.jpg' | file_url }}"
+}
+</script>
+
+{% javascript %}
+// Clean JavaScript code with no Liquid tags
+document.addEventListener('DOMContentLoaded', function() {
+  // Parse the configuration from the JSON element
+  let config;
+  try {
+    const configElement = document.getElementById('intro-text-config');
+    config = JSON.parse(configElement.textContent);
+  } catch (error) {
+    console.error('Failed to parse hover image configuration:', error);
+    return;
+  }
+
+  // Add hover image functionality for intro-text section
+  const introTextSection = document.querySelector('.intro-text');
+  const hoverContainer = document.querySelector('.hover-image-container');
+  const hoverImage = document.querySelector('.hover-image');
+  const loadingIndicator = document.querySelector('.hover-image-loading');
+  let hoverImages = [];
+  let isImagesLoaded = false;
+  
+  if (!config.hoverEffectEnabled) {
+    // Hover effect is disabled - hide relevant elements
+    disableHoverEffect();
+    return; // Exit early
+  }
+  
+  // Function to completely disable the hover effect
+  function disableHoverEffect() {
+    if (hoverContainer) {
+      hoverContainer.style.display = 'none';
+    }
+    if (loadingIndicator) {
+      loadingIndicator.style.display = 'none';
+    }
+    isImagesLoaded = false;
+    console.log('Hover effect disabled - no valid images found.');
+  }
+  
+  // Function to preload hover images
+  function loadHoverImages() {    
+    // Check if we have configured images from section blocks
+    if (config.configuredImageUrls && config.configuredImageUrls.length > 0 && 
+        config.configuredImageUrls[0] && config.configuredImageUrls[0].trim() !== '') {
+      // Use configured images from section blocks
+      preloadImages(config.configuredImageUrls);
+    } else {
+      // No valid images - disable the hover effect
+      disableHoverEffect();
+    }
+  }
+  
+  // Helper function to show error message
+  function showErrorMessage(message) {
+    if (loadingIndicator) {
+      loadingIndicator.textContent = message || 'Error loading images';
+      setTimeout(() => {
+        loadingIndicator.classList.add('hidden');
+      }, 3000);
+    }
+  }
+  
+  // Helper function to safely get a valid image from the array
+  function getValidImage(index) {
+    if (!hoverImages || hoverImages.length === 0) return null;
+    
+    // If index specified, try to get that specific image
+    if (index !== undefined) {
+      return hoverImages[index] || null;
+    }
+    
+    // Otherwise find the first valid image
+    return hoverImages.find(img => img && img.src) || null;
+  }
+  
+  // Function to preload an array of image URLs
+  function preloadImages(imageUrls) {
+    // Handle empty array case
+    if (!imageUrls || imageUrls.length === 0) {
+      console.log('No hover images found.');
+      disableHoverEffect();
+      return;
+    }
+    
+    // Preload all images
+    let loadedCount = 0;
+    let errorCount = 0;
+    
+    imageUrls.forEach((url, index) => {
+      if (!url) {
+        loadedCount++;
+        errorCount++;
+        return; // Skip empty URLs
+      }
+      
+      const img = new Image();
+      img.onload = function() {
+        loadedCount++;
+        hoverImages[index] = img; // Ensure correct order
+        
+        // Update loading indicator
+        if (loadingIndicator) {
+          loadingIndicator.textContent = `Loading: ${Math.floor((loadedCount / imageUrls.length) * 100)}%`;
+        }
+        
+        if (loadedCount + errorCount === imageUrls.length) {
+          finishLoading();
+        }
+      };
+      img.onerror = function() {
+        loadedCount++;
+        errorCount++;
+        // Silent error handling to reduce console noise
+        
+        if (loadedCount + errorCount === imageUrls.length) {
+          finishLoading();
+        }
+      };
+      img.src = url;
+    });
+    
+    // Centralized function to handle loading completion
+    function finishLoading() {
+      // Check if any images were loaded successfully
+      const validImages = hoverImages.filter(Boolean);
+      isImagesLoaded = validImages.length > 0;
+      
+      if (isImagesLoaded) {
+        console.log(`Loaded ${validImages.length} hover images successfully.`);
+        
+        // Hide loading indicator
+        if (loadingIndicator) {
+          loadingIndicator.classList.add('hidden');
+        }
+        
+        // Show first image
+        if (hoverImage) {
+          const firstImage = getValidImage(0);
+          if (firstImage && firstImage.src) {
+            hoverImage.src = firstImage.src;
+            hoverImage.classList.add('loaded');
+          }
+        }
+      } else {
+        console.log('No hover images could be loaded. Disabling hover effect.');
+        disableHoverEffect();
+      }
+    }
+  }
+  
+  // Load images when page loads
+  loadHoverImages();
+  
+  // Update container size from settings - respects CSS media queries with !important
+  if (hoverContainer && isImagesLoaded) {
+    // On desktop, use the configuration value
+    // Media queries will override this with !important for tablets and mobile
+    hoverContainer.style.width = `${config.hoverImageWidth}px`;
+    hoverContainer.style.height = `${config.hoverImageWidth}px`;
+  }
+  
+  // Add mousemove event to track cursor and update image
+  if (introTextSection) {
+    let isHovering = false;
+    
+    // Function to update hover image position and content
+    function updateHoverImage(e) {
+      if (!isHovering || !isImagesLoaded) return;
+      
+      // Get valid images
+      const validImages = hoverImages.filter(img => img && img.src);
+      if (validImages.length === 0) return;
+      
+      // Calculate cursor position as percentage of element width
+      const viewportWidth = window.innerWidth;
+      
+      // Calculate the boundaries for the active zone (8% margin on each side)
+      const leftMargin = viewportWidth * 0.08;
+      const rightMargin = viewportWidth * 0.92;
+      
+      let selectedImage;
+      
+      // Check if cursor is within the active middle section of the viewport
+      if (e.clientX < leftMargin) {
+        // Left of the active zone - use the first image
+        selectedImage = validImages[0];
+      } else if (e.clientX > rightMargin) {
+        // Right of the active zone - use the last image
+        selectedImage = validImages[validImages.length - 1];
+      } else {
+        // Inside the active zone - calculate which image to show based on cursor position
+        // Map the cursor position from [leftMargin, rightMargin] to [0, 1]
+        const activeWidth = rightMargin - leftMargin;
+        const xInActiveZone = e.clientX - leftMargin;
+        const xPercent = Math.min(Math.max(xInActiveZone / activeWidth, 0), 1);
+        
+        const imageIndex = Math.floor(xPercent * validImages.length);
+        selectedImage = validImages[Math.min(imageIndex, validImages.length - 1)];
+      }
+      
+      if (selectedImage && selectedImage.src) {
+        // Update hover image source
+        hoverImage.src = selectedImage.src;
+        
+        // Always position the hover container at cursor position regardless of zone
+        // This ensures it follows the cursor even outside of the active zone
+        hoverContainer.style.left = `${e.clientX}px`;
+        hoverContainer.style.top = `${e.clientY}px`;
+        
+        // Make sure the image is visible
+        if (!hoverImage.classList.contains('loaded')) {
+          hoverImage.classList.add('loaded');
+        }
+      }
+    }
+    
+    introTextSection.addEventListener('mouseenter', function() {
+      if (!isImagesLoaded) return;
+      isHovering = true;
+      if (hoverImages.filter(img => img && img.src).length > 0) {
+        hoverContainer.style.opacity = '1';
+      }
+    });
+    
+    // Add event listeners for mouse movement
+    introTextSection.addEventListener('mousemove', updateHoverImage);
+    
+    // Prevent click from affecting the hover behavior
+    introTextSection.addEventListener('mousedown', function(e) {
+      if (!isImagesLoaded) return;
+      // Don't let the click affect our hover state
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Make sure hover effect continues after click
+      updateHoverImage(e);
+      return false;
+    });
+    
+    // Re-enable hover on mouseup to ensure it continues working after click
+    introTextSection.addEventListener('mouseup', function(e) {
+      if (!isImagesLoaded) return;
+      updateHoverImage(e);
+    });
+    
+    // Ensure hover continues working after click
+    introTextSection.addEventListener('click', function(e) {
+      if (!isImagesLoaded) return;
+      e.preventDefault();
+      updateHoverImage(e);
+      return false;
+    });
+    
+    // Hide the hover image when mouse leaves the section
+    introTextSection.addEventListener('mouseleave', function() {
+      isHovering = false;
+      if (hoverContainer) {
+        hoverContainer.style.opacity = '0';
+      }
+    });
+  }
+});
+{% endjavascript %} 

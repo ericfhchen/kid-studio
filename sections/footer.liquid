@@ -1,105 +1,8 @@
 <footer class="footer">
-  <div class="footer__content">
-    {% if section.blocks.size > 0 %}
-      <div class="footer__blocks">
-        {% for block in section.blocks %}
-          <div class="footer__block footer__block--{{ block.type }}" {{ block.shopify_attributes }}>
-            {% case block.type %}
-              {% when 'text' %}
-                <div class="footer__block-title">{{ block.settings.title }}</div>
-                <div class="footer__block-content rte">{{ block.settings.text }}</div>
-              
-              {% when 'newsletter' %}
-                <div class="footer__block-title">{{ block.settings.title }}</div>
-                {% form 'customer', id: 'ContactFooter' %}
-                  <input type="hidden" name="contact[tags]" value="newsletter">
-                  <div class="footer__newsletter">
-                    <div class="footer__newsletter-input-wrapper">
-                      <input
-                        type="email"
-                        name="contact[email]"
-                        id="ContactFooter-email"
-                        class="footer__newsletter-input"
-                        value="{{ form.email }}"
-                        placeholder="{{ 'general.newsletter_form.email_placeholder' | t }}"
-                        required
-                      >
-                      <button type="submit" class="footer__newsletter-submit" name="commit">
-                        {{ 'general.newsletter_form.submit' | t }}
-                      </button>
-                    </div>
-                    {%- if form.errors -%}
-                      <div class="footer__newsletter-error">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</div>
-                    {%- endif -%}
-                    {%- if form.posted_successfully? -%}
-                      <div class="footer__newsletter-success">{{ 'general.newsletter_form.confirmation' | t }}</div>
-                    {%- endif -%}
-                  </div>
-                {% endform %}
-              
-              {% when 'link_list' %}
-                <div class="footer__block-title">{{ block.settings.title }}</div>
-                {%- assign footer_linklist = block.settings.menu -%}
-                {% if linklists[footer_linklist].links.size > 0 %}
-                  <ul class="footer__menu">
-                    {% for link in linklists[footer_linklist].links %}
-                      <li class="footer__menu-item">
-                        <a href="{{ link.url }}" class="footer__menu-link">
-                          {{ link.title }}
-                        </a>
-                      </li>
-                    {% endfor %}
-                  </ul>
-                {% endif %}
-              
-              {% when 'social' %}
-                <div class="footer__block-title">{{ block.settings.title }}</div>
-                <ul class="footer__social">
-                  {% if settings.social_facebook_link != blank %}
-                    <li class="footer__social-item">
-                      <a href="{{ settings.social_facebook_link }}" class="footer__social-link">
-                        {% render 'icon-facebook' %}
-                        <span class="visually-hidden">Facebook</span>
-                      </a>
-                    </li>
-                  {% endif %}
-                  {% if settings.social_instagram_link != blank %}
-                    <li class="footer__social-item">
-                      <a href="{{ settings.social_instagram_link }}" class="footer__social-link">
-                        {% render 'icon-instagram' %}
-                        <span class="visually-hidden">Instagram</span>
-                      </a>
-                    </li>
-                  {% endif %}
-                  {% if settings.social_twitter_link != blank %}
-                    <li class="footer__social-item">
-                      <a href="{{ settings.social_twitter_link }}" class="footer__social-link">
-                        {% render 'icon-twitter' %}
-                        <span class="visually-hidden">Twitter</span>
-                      </a>
-                    </li>
-                  {% endif %}
-                </ul>
-            {% endcase %}
-          </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-    
-    <div class="footer__bottom">
-      <div class="footer__copyright">
-        &copy; {{ 'now' | date: "%Y" }} {{ shop.name }}. {{ section.settings.copyright_text }}
-      </div>
-      
-      {% if section.settings.show_payment_icons %}
-        <div class="footer__payment">
-          {% for type in shop.enabled_payment_types %}
-            {{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}
-          {% endfor %}
-        </div>
-      {% endif %}
-    </div>
-  </div>
+  <a href="http://kidstudio.co" target="_blank" class="footer__container">
+    <div class="footer__text">BY KID. STUDIO</div>
+  </a>
+  {% comment %} <div class="website-credit__text">Website by <span><a href="https://left.systems" target="_blank">LEFT</a></span></div> {% endcomment %}
 </footer>
 
 {% schema %}
@@ -109,7 +12,7 @@
     {
       "type": "text",
       "id": "copyright_text",
-      "label": "Copyright text",
+      "label": "Copyright Text",
       "default": "All rights reserved."
     },
     {
@@ -141,7 +44,6 @@
     {
       "type": "newsletter",
       "name": "Newsletter",
-      "limit": 1,
       "settings": [
         {
           "type": "text",
@@ -168,18 +70,6 @@
           "default": "footer"
         }
       ]
-    },
-    {
-      "type": "social",
-      "name": "Social media",
-      "settings": [
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Heading",
-          "default": "Follow us"
-        }
-      ]
     }
   ],
   "presets": [
@@ -199,4 +89,101 @@
     }
   ]
 }
-{% endschema %} 
+{% endschema %}
+
+{% stylesheet %}
+.footer {
+  background: none;
+  padding: 4rem 0 0 0;
+  text-align: center;
+  letter-spacing: 0;
+  position: relative;
+}
+
+.footer__container {
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 60%;
+  height: 20rem;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+}
+
+.footer__text {
+  font-size: 3rem;
+  font-weight: bold;
+  font-family: Helvetica, sans-serif;
+  color: #fff;
+  transition: filter 0.3s ease;
+  overflow: visible;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.footer__container:hover {
+  text-decoration: none;
+}
+
+.footer__container:hover .footer__text {
+  filter: blur(4px);
+}
+
+.footer__newsletter-form {
+  display: flex;
+}
+
+.footer__newsletter-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-right: none;
+  font-size: 14px;
+}
+
+.footer__newsletter-submit {
+  background-color: #000;
+  color: #fff;
+  border: none;
+  padding: 0 15px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.website-credit__text {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 100;
+  font-size: 0.75rem;
+  font-family: Helvetica, sans-serif;
+  color: #000;
+}
+
+.website-credit__text span a {
+  color: #000;
+  text-decoration: none;
+}
+
+.website-credit__text span a:hover {
+  animation: blink 0.1s linear infinite;
+}
+
+@media screen and (max-width: 768px) {
+.footer__container {
+  max-width: 75%;
+  height: 10rem;
+
+}
+
+.footer__text {
+  font-size: 1.5rem;
+}
+
+.website-credit__text {
+    font-size: 0.65rem;
+  }
+}
+{% endstylesheet %} 

@@ -1,0 +1,426 @@
+<div class="product-grid">
+  <div class="container">
+    
+    {% assign collection = collections['all'] %}
+    
+    {% if collection.products.size > 0 %}
+      <div class="product-grid__grid">
+        {% for product in collection.products limit: section.settings.products_limit %}
+          <div class="product-grid__item">
+            <div class="product-grid__card">
+              {% if product.featured_image != blank %}
+                <div class="product-grid__image-container">
+                  <img 
+                    src="{{ product.featured_image | img_url: 'master' }}" 
+                    alt="{{ product.featured_image.alt | escape }}"
+                    class="product-grid__image"
+                    loading="lazy"
+                  >
+                </div>
+              {% else %}
+                <div class="product-grid__image-container">
+                  {{ 'product-1' | placeholder_svg_tag: 'product-grid__image placeholder-svg' }}
+                </div>
+              {% endif %}
+              
+              <div class="product-grid__content">
+                {% comment %} Assign cover type based on product position {% endcomment %}
+                {% if forloop.first %}
+                  {% assign cover_type = 'Cover 01' %}
+                {% else %}
+                  {% assign cover_type = 'Cover 02' %}
+                {% endif %}
+                
+                <span class="product-grid__product-title" data-cover-type="{{ cover_type }}">
+                  {{ cover_type }}
+                </span>
+                
+                <div class="product-grid__price">
+                  {% if product.compare_at_price > product.price %}
+                    <span class="product-grid__price--sale">{{ product.price | money }}</span>
+                    <span class="product-grid__price--compare">{{ product.compare_at_price | money }}</span>
+                  {% else %}
+                    <span>{{ product.price | money }}</span>
+                  {% endif %}
+                </div>
+                
+                <button class="product-grid__buy-button" 
+                        data-product-id="{{ product.id }}"
+                        data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+                  BUY
+                </button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="product-grid__empty">
+        <p>No products available.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Our Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "min": 2,
+      "max": 12,
+      "step": 2,
+      "default": 4,
+      "label": "Number of products to show"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Grid",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+.product-grid {
+  padding: 8rem 0;
+}
+
+.product-grid__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.product-grid__card {
+  overflow: hidden;
+}
+
+.product-grid__image-container {
+  position: relative;
+  padding-bottom: 100%;
+  overflow: hidden;
+}
+
+.product-grid__image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-grid__content {
+  font-family: 'Panama Monospace', monospace;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.product-grid__product-title {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.product-grid__price {
+  margin-bottom: 2rem;
+  font-weight: 600;
+}
+
+.product-grid__price--sale {
+  color: #e53e3e;
+  margin-right: 8px;
+}
+
+.product-grid__price--compare {
+  text-decoration: line-through;
+  color: #888;
+  font-weight: normal;
+}
+
+.product-grid__buy-button {
+  display: block;
+  width: auto;
+  margin: 0 auto;
+  color: #000000;
+  background: none;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 2rem;
+  font-family: Helvetica, sans-serif;
+}
+
+.product-grid__buy-button:hover {
+  animation: blink 0.1s linear infinite;
+}
+
+.product-grid__empty {
+  text-align: center;
+  padding: 40px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    padding: 4rem 0;
+  }
+  
+  .product-grid__content {
+    font-size: 1.5rem;
+  }
+
+  .product-grid__price {
+    margin-bottom: 1rem;
+  }
+
+  .product-grid__buy-button {
+    font-size: 1.5rem;
+  }
+  
+  .product-grid__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+{% endstylesheet %}
+
+{% javascript %}
+document.addEventListener('DOMContentLoaded', function() {
+  // Add to cart functionality
+  const buyButtons = document.querySelectorAll('.product-grid__buy-button');
+  
+  buyButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const variantId = this.dataset.variantId;
+      const productId = this.dataset.productId;
+      
+      // Get the product element to extract metadata
+      const productElement = this.closest('.product-grid__item');
+      const titleElement = productElement.querySelector('.product-grid__product-title');
+      // Get cover type from data attribute or fallback to text content
+      const bookCoverType = titleElement ? (titleElement.dataset.coverType || titleElement.textContent.trim()) : '';
+      
+      console.log('Adding to cart:', {
+        variantId,
+        productId,
+        bookCoverType
+      });
+      
+      // Call Shopify AJAX API to add item to cart
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: variantId,
+          quantity: 1,
+          properties: {
+            'Book Cover Type': bookCoverType
+          }
+        })
+      })
+      .then(response => response.json())
+      .then(item => {
+        // Show cart
+        const cartContainer = document.getElementById('cart-container');
+        if (cartContainer && cartContainer.classList.contains('hidden')) {
+          cartContainer.classList.remove('hidden');
+        }
+        
+        // Show cart overlay
+        const cartOverlay = document.getElementById('cart-overlay');
+        if (cartOverlay) {
+          cartOverlay.style.display = 'block';
+        }
+        
+        // Refresh cart contents
+        fetch('/cart.js')
+          .then(response => response.json())
+          .then(cart => {
+            updateCartUI(cart);
+          })
+          .catch(error => console.error('Error:', error));
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  });
+  
+  function updateCartUI(cart) {
+    const cartEmpty = document.querySelector('.cart__empty');
+    const cartItems = document.querySelector('.cart__items');
+    const cartFooter = document.querySelector('.cart__footer');
+    const subtotalElement = document.querySelector('.cart__subtotal span:last-child');
+    const cartOverlay = document.getElementById('cart-overlay');
+    
+    if (cart.item_count === 0) {
+      if (cartEmpty) cartEmpty.classList.remove('hidden');
+      if (cartItems) cartItems.classList.add('hidden');
+      if (cartFooter) cartFooter.classList.add('hidden');
+    } else {
+      if (cartEmpty) cartEmpty.classList.add('hidden');
+      if (cartItems) cartItems.classList.remove('hidden');
+      if (cartFooter) cartFooter.classList.remove('hidden');
+      
+      // Update subtotal
+      if (subtotalElement) {
+        subtotalElement.textContent = formatMoney(cart.total_price);
+      }
+      
+      // Show cart overlay
+      if (cartOverlay) {
+        cartOverlay.style.display = 'block';
+      }
+      
+      // Update cart items without page refresh
+      updateCartItems(cart);
+    }
+  }
+  
+  function updateCartItems(cart) {
+    const cartItemsContainer = document.querySelector('.cart__items');
+    if (!cartItemsContainer) return;
+    
+    // Clear existing items
+    cartItemsContainer.innerHTML = '';
+    
+    // Add each item to the cart
+    cart.items.forEach(item => {
+      const itemElement = document.createElement('div');
+      itemElement.className = 'cart__item';
+      itemElement.dataset.variantId = item.variant_id;
+      
+      const imageUrl = item.image ? item.image.replace(/(\.[^.]*)$/, '_200x$1') : '';
+      
+      // Check for properties
+      let metafieldHtml = '';
+      if (item.properties && item.properties['Book Cover Type']) {
+        metafieldHtml = `<p class="cart__item-metafield">${item.properties['Book Cover Type']}</p>`;
+      }
+      
+      itemElement.innerHTML = `
+        <div class="cart__item-image">
+          <img src="${imageUrl}" alt="${item.title}">
+        </div>
+        <div class="cart__item-details">
+          <h3 class="cart__item-title">${item.product_title}</h3>
+          ${metafieldHtml}
+          <p class="cart__item-price">${formatMoney(item.final_line_price)}</p>
+          <div class="cart__item-quantity">
+            <button class="cart__item-quantity-decrease" aria-label="Decrease quantity">-</button>
+            <input class="cart__item-quantity-input" type="number" value="${item.quantity}" min="1" aria-label="Item quantity">
+            <button class="cart__item-quantity-increase" aria-label="Increase quantity">+</button>
+          </div>
+          <button class="cart__item-remove" aria-label="Remove item">Remove</button>
+        </div>
+      `;
+      
+      cartItemsContainer.appendChild(itemElement);
+    });
+    
+    // Re-attach event listeners for the new cart items
+    attachCartItemEventListeners();
+  }
+  
+  function attachCartItemEventListeners() {
+    // Quantity decrease buttons
+    document.querySelectorAll('.cart__item-quantity-decrease').forEach(button => {
+      button.addEventListener('click', function() {
+        const input = this.nextElementSibling;
+        const currentValue = parseInt(input.value);
+        const cartItem = this.closest('.cart__item');
+        
+        if (currentValue <= 1) {
+          // If quantity is 1 or less, remove the item
+          removeCartItem(cartItem);
+        } else {
+          // Otherwise decrease the quantity
+          input.value = currentValue - 1;
+          updateCartItem(cartItem, currentValue - 1);
+        }
+      });
+    });
+    
+    // Quantity increase buttons
+    document.querySelectorAll('.cart__item-quantity-increase').forEach(button => {
+      button.addEventListener('click', function() {
+        const input = this.previousElementSibling;
+        const currentValue = parseInt(input.value);
+        input.value = currentValue + 1;
+        updateCartItem(this.closest('.cart__item'), currentValue + 1);
+      });
+    });
+    
+    // Remove buttons
+    document.querySelectorAll('.cart__item-remove').forEach(button => {
+      button.addEventListener('click', function() {
+        const cartItem = this.closest('.cart__item');
+        removeCartItem(cartItem);
+      });
+    });
+  }
+  
+  function removeCartItem(cartItem) {
+    const variantId = cartItem.dataset.variantId;
+    
+    // Call Shopify AJAX API to remove item
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: 0
+      })
+    })
+    .then(response => response.json())
+    .then(cart => {
+      updateCartUI(cart);
+    })
+    .catch(error => console.error('Error:', error));
+  }
+  
+  function updateCartItem(cartItem, quantity) {
+    const variantId = cartItem.dataset.variantId;
+    
+    // Call Shopify AJAX API to update item quantity
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: quantity
+      })
+    })
+    .then(response => response.json())
+    .then(cart => {
+      updateCartUI(cart);
+    })
+    .catch(error => console.error('Error:', error));
+  }
+  
+  function formatMoney(cents) {
+    return '$' + (cents / 100).toFixed(2);
+  }
+});
+{% endjavascript %} 

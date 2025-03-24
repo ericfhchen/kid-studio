@@ -41,3 +41,4 @@ yarn-error.log*
 
 # Theme Kit files
 config.yml 
+.shopify

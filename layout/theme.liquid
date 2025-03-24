@@ -22,20 +22,16 @@
   {{ content_for_header }}
 
   {{ 'application.css' | asset_url | stylesheet_tag }}
-  {{ 'application.js' | asset_url | script_tag }}
+  <script src="{{ 'application.js' | asset_url }}" defer></script>
 </head>
 
 <body class="template-{{ template.name | handle }}">
-  <div id="shopify-section-header" class="shopify-section">
-    {% section 'header' %}
-  </div>
-
+  
+  
   <main role="main" id="MainContent">
     {{ content_for_layout }}
   </main>
-
-  <div id="shopify-section-footer" class="shopify-section">
-    {% section 'footer' %}
-  </div>
+  
+  
 </body>
 </html> 
