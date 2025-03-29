@@ -21,6 +21,7 @@
     "font_size_heading_base": 28,
     "font_body": "helvetica_n4",
     "font_size_body_base": 16,
+    "enable_splash_page": true,
     "sections": {
       "header": {
         "type": "header",
