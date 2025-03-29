@@ -19,6 +19,30 @@
       "id": "description",
       "label": "Description",
       "default": "<p>273 PP.<br>SOFTCOVER WITH TIP-IN IMAGE.<br>HARDCOVER LINEN SLIP CASE.<br>FOIL LETTERING.<br>EXPOSED SMYTH-SEWN SPINE.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Content Width"
+    },
+    {
+      "type": "range",
+      "id": "content_width_desktop",
+      "label": "Desktop Width (%)",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 70,
+      "info": "Width of the content on desktop displays"
+    },
+    {
+      "type": "range",
+      "id": "content_width_mobile",
+      "label": "Mobile Width (%)",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 100,
+      "info": "Width of the content on mobile displays"
     }
   ]
 }
@@ -31,7 +55,7 @@
 }
 
 .product-specs__content {
-  max-width: 60%;
+  max-width: {{ section.settings.content_width_desktop | default: 70 }}%;
   margin: 0 auto;
 }
 
@@ -46,7 +70,7 @@
   }
   
   .product-specs__content {
-    max-width: 100%;
+    max-width: {{ section.settings.content_width_mobile | default: 100 }}%;
   }
 
   .product-specs__description {

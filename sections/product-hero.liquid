@@ -30,6 +30,30 @@
       "type": "image_picker",
       "id": "image",
       "label": "Product Image"
+    },
+    {
+      "type": "header",
+      "content": "Image Container Width"
+    },
+    {
+      "type": "range",
+      "id": "image_container_width_desktop",
+      "label": "Desktop Width (%)",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 60,
+      "info": "Width of the image container on desktop displays"
+    },
+    {
+      "type": "range",
+      "id": "image_container_width_mobile",
+      "label": "Mobile Width (%)",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 100,
+      "info": "Width of the image container on mobile displays"
     }
   ],
   "presets": [
@@ -53,7 +77,7 @@
 }
 
 .product-hero__image-container {
-  width: 60%;
+  width: {{ section.settings.image_container_width_desktop | default: 75 }}%;
   margin: 0 auto;
 }
 
@@ -69,8 +93,8 @@
   }
 
   .product-hero__image-container {
-  width: 100%;
-  margin: 0 auto;
+    width: {{ section.settings.image_container_width_mobile | default: 100 }}%;
+    margin: 0 auto;
   }
   
 }
