@@ -176,5 +176,27 @@
         "info": "Will be scaled down to 32 x 32px"
       }
     ]
+  },
+  {
+    "name": "Launch Settings",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Pre-Launch Controls"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_splash_page",
+        "label": "Enable splash page",
+        "default": true,
+        "info": "Turn off when ready to launch the site"
+      },
+      {
+        "type": "color",
+        "id": "splash_page_background",
+        "label": "Splash page background",
+        "default": "#D00002"
+      }
+    ]
   }
 ] 

@@ -26,12 +26,9 @@
 </head>
 
 <body class="template-{{ template.name | handle }}">
-  
-  
+  {% section 'splash-page' %}
   <main role="main" id="MainContent">
     {{ content_for_layout }}
   </main>
-  
-  
 </body>
 </html> 
