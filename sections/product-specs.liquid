@@ -1,6 +1,6 @@
 <div class="product-specs">
   <div class="container">
-    <div class="product-specs__content">
+    <div class="product-specs__content" style="max-width: {{ section.settings.content_width_desktop | default: 70 }}%;">
       
       {% if section.settings.description != blank %}
         <div class="product-specs__description">{{ section.settings.description }}</div>
@@ -9,6 +9,14 @@
     </div>
   </div>
 </div>
+
+<style>
+  @media (max-width: 1024px) {
+    .product-specs__content {
+      max-width: {{ section.settings.content_width_mobile | default: 100 }}% !important;
+    }
+  }
+</style>
 
 {% schema %}
 {
@@ -55,7 +63,6 @@
 }
 
 .product-specs__content {
-  max-width: {{ section.settings.content_width_desktop | default: 70 }}%;
   margin: 0 auto;
 }
 
@@ -69,10 +76,6 @@
     padding: 2rem 0;
   }
   
-  .product-specs__content {
-    max-width: {{ section.settings.content_width_mobile | default: 100 }}%;
-  }
-
   .product-specs__description {
     font-size: 1.5rem;
   }

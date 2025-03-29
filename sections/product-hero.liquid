@@ -1,7 +1,7 @@
 <div class="product-hero">
   <div class="container">
     <div class="product-hero__content">
-      <div class="product-hero__image-container">
+      <div class="product-hero__image-container" style="width: {{ section.settings.image_container_width_desktop | default: 75 }}%;">
         {% if section.settings.image != blank %}
           <img 
             src="{{ section.settings.image | img_url: 'master' }}" 
@@ -21,6 +21,14 @@
     </div>
   </div>
 </div>
+
+<style>
+  @media (max-width: 768px) {
+    .product-hero__image-container {
+      width: {{ section.settings.image_container_width_mobile | default: 100 }}% !important;
+    }
+  }
+</style>
 
 {% schema %}
 {
@@ -77,7 +85,6 @@
 }
 
 .product-hero__image-container {
-  width: {{ section.settings.image_container_width_desktop | default: 75 }}%;
   margin: 0 auto;
 }
 
@@ -91,11 +98,5 @@
   .product-hero {
     
   }
-
-  .product-hero__image-container {
-    width: {{ section.settings.image_container_width_mobile | default: 100 }}%;
-    margin: 0 auto;
-  }
-  
 }
 {% endstylesheet %} 
