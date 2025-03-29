@@ -75,6 +75,15 @@
       },
       "intro-text": {
         "type": "intro-text",
+        "blocks": {
+          "hover_image_RdxcEp": {
+            "type": "hover_image",
+            "settings": {}
+          }
+        },
+        "block_order": [
+          "hover_image_RdxcEp"
+        ],
         "settings": {
           "text": "<p>GOD BLESS TORONTO COMMEMRATES THE 10 YEAR ANNIVERSARY OF Kid.</p>",
           "enable_hover_effect": true,
@@ -84,13 +93,13 @@
       "product-hero": {
         "type": "product-hero",
         "settings": {
-          "image": "shopify://shop_images/Cereal_slip_insidebook_whitebackdrop.png"
+          "image": "shopify://shop_images/1x1Cereal_slip_insidebook_whitebackdrop.jpg"
         }
       },
       "product-specs": {
         "type": "product-specs",
         "settings": {
-          "description": "<p>273 PP.<br>SOFTCOVER WITH TIP-IN IMAGE.<br>HARDCOVER LINEN SLIP CASE.<br>FOIL LETTERING.<br>EXPOSED SMYTH-SEWN SPINE.</p>"
+          "description": "<p>273 PP.<br/>SOFTCOVER WITH TIP-IN IMAGE.<br/>HARDCOVER LINEN SLIP CASE.<br/>FOIL LETTERING.<br/>EXPOSED SMYTH-SEWN SPINE.</p>"
         }
       },
       "product-grid": {
@@ -111,7 +120,7 @@
         "type": "publishing-credits",
         "settings": {
           "title": "Publishing Credits",
-          "text": "<p>PUBLISHING CREDITS. Kid. Studio ©2025. Designed by Alex Doe. Produced by Jordan Smith. Editing by Taylor Lee. Featuring contributions from 30 contributors, including Chris Brown, Jamie Fox, Morgan Reed, Sam Carter, Riley Adams, Jordan Blake, Taylor Hill, Alex Kim, Cameron White, Avery Scott, Devon James, Drew Morgan, Casey Bennett, Logan West, Peyton Gray, Sydney Clark, Blake Harper, Jesse Lane, Dylan Fox, Quinn Brooks, Reese Parker, Skylar Collins, Corey Bell, Alex Rivera, Jamie Stone, Robin Myers, Cameron Dawson, Tyler Green, Hayden Fisher, and Riley Moore.</p><p>Website by <a href=\"https://left.systems\" target=\"_blank\">LEFT</a>.</p>"
+          "text": "<p>PUBLISHING CREDITS. Kid. Studio ©2025. Designed by Alex Doe. Produced by Jordan Smith. Editing by Taylor Lee. Featuring contributions from 30 contributors, including Chris Brown, Jamie Fox, Morgan Reed, Sam Carter, Riley Adams, Jordan Blake, Taylor Hill, Alex Kim, Cameron White, Avery Scott, Devon James, Drew Morgan, Casey Bennett, Logan West, Peyton Gray, Sydney Clark, Blake Harper, Jesse Lane, Dylan Fox, Quinn Brooks, Reese Parker, Skylar Collins, Corey Bell, Alex Rivera, Jamie Stone, Robin Myers, Cameron Dawson, Tyler Green, Hayden Fisher, and Riley Moore.</p><p></p><p>Website by <a href=\"https://left.systems\" target=\"_blank\">LEFT</a>.</p>"
         }
       },
       "policies": {
