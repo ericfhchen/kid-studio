@@ -6,20 +6,24 @@
           <div class="spreads-gallery__image-container" data-index="{{ forloop.index0 }}">
             {% if block.type == 'image' and block.settings.image != blank %}
               <img 
-                src="{{ block.settings.image | img_url: '1000x' }}" 
+                src="{{ block.settings.image | img_url: '2000x' }}" 
                 srcset="{{ block.settings.image | img_url: '600x' }} 600w,
                         {{ block.settings.image | img_url: '800x' }} 800w,
-                        {{ block.settings.image | img_url: '1000x' }} 1000w,
                         {{ block.settings.image | img_url: '1200x' }} 1200w,
-                        {{ block.settings.image | img_url: '1600x' }} 1600w"
-                sizes="(max-width: 768px) 50vw, 33.33vw"
+                        {{ block.settings.image | img_url: '1600x' }} 1600w,
+                        {{ block.settings.image | img_url: '2000x' }} 2000w,
+                        {{ block.settings.image | img_url: '2400x' }} 2400w"
+                sizes="(max-width: 768px) 50vw, 
+                       (max-width: 1024px) 33.33vw, 
+                       (max-width: 1600px) 600px,
+                       800px"
                 class="spreads-gallery__image"
                 loading="lazy"
               >
             {% else %}
               {% assign placeholder_index = forloop.index | modulo: 5 | plus: 1 %}
               <img 
-                src="https://via.placeholder.com/1000x667/eeeeee/999999?text=Placeholder+Image+{{ placeholder_index }}" 
+                src="https://via.placeholder.com/2000x1333/eeeeee/999999?text=Placeholder+Image+{{ placeholder_index }}" 
                 alt="Placeholder image {{ placeholder_index }}"
                 class="spreads-gallery__image"
                 loading="lazy"
@@ -34,7 +38,7 @@
         <div class="spreads-gallery__item">
           <div class="spreads-gallery__image-container" data-index="{{ forloop.index0 }}">
             <img 
-              src="https://via.placeholder.com/1000x667/eeeeee/999999?text=Placeholder+Image+{{ forloop.index }}" 
+              src="https://via.placeholder.com/2000x1333/eeeeee/999999?text=Placeholder+Image+{{ forloop.index }}" 
               alt="Placeholder image {{ forloop.index }}"
               class="spreads-gallery__image"
               loading="lazy"
@@ -276,11 +280,23 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentIndex = 0;
   const galleryImages = [];
   
+  // Determine if we're on a device that can handle high-resolution images
+  const isHighResDevice = window.innerWidth > 1024;
+  
   // Collect all gallery images
   galleryItems.forEach(item => {
     const image = item.querySelector('.spreads-gallery__image');
+    const imageUrl = image.src;
+    
+    // For high-res devices, try to load a higher quality version for the lightbox
+    let highResUrl = imageUrl;
+    if (isHighResDevice && !imageUrl.includes('placeholder.com')) {
+      // Replace the resolution in the URL with a higher one
+      highResUrl = imageUrl.replace(/(\d+)x(\d*)/, '2400x');
+    }
+    
     galleryImages.push({
-      src: image.src,
+      src: highResUrl,
       alt: image.alt
     });
   });
@@ -333,8 +349,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (galleryImages.length === 0) return;
     
     const image = galleryImages[index];
-    lightboxImage.src = image.src;
-    lightboxImage.alt = image.alt;
+    
+    // Preload the image to ensure smooth transition
+    const preloadImg = new Image();
+    preloadImg.src = image.src;
+    
+    preloadImg.onload = function() {
+      lightboxImage.src = image.src;
+      lightboxImage.alt = image.alt;
+      lightboxImage.style.opacity = 1;
+    };
     
     // Prevent scrolling when lightbox is open
     document.body.style.overflow = 'hidden';
@@ -356,11 +380,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fade effect for smoother transition
     lightboxImage.style.opacity = 0;
     
-    setTimeout(() => {
+    // Preload the next image
+    const preloadImg = new Image();
+    preloadImg.src = image.src;
+    
+    preloadImg.onload = function() {
       lightboxImage.src = image.src;
       lightboxImage.alt = image.alt;
       lightboxImage.style.opacity = 1;
-    }, 200);
+    };
+    
+    // If the image takes too long to load, apply it anyway after a short timeout
+    setTimeout(() => {
+      if (lightboxImage.style.opacity === '0') {
+        lightboxImage.src = image.src;
+        lightboxImage.alt = image.alt;
+        lightboxImage.style.opacity = 1;
+      }
+    }, 300);
   }
 });
 {% endjavascript %} 
