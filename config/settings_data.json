@@ -95,7 +95,7 @@
         "type": "product-hero",
         "settings": {
           "image": "shopify://shop_images/1x1Cereal_slip_insidebook_whitebackdrop.jpg",
-          "image_container_width_desktop": 50,
+          "image_container_width_desktop": 75,
           "image_container_width_mobile": 100
         }
       },
