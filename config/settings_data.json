@@ -158,6 +158,12 @@
           "image_PbTGFN"
         ],
         "settings": {}
+      },
+      "splash-page": {
+        "type": "splash-page",
+        "settings": {
+          "desktop_image": "shopify://shop_images/SPLASH_PAGE_PLACEHOLDER.svg"
+        }
       }
     },
     "content_for_index": []
