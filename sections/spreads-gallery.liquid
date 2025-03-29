@@ -50,13 +50,13 @@
 <div class="spreads-gallery-lightbox" id="spreads-gallery-lightbox">
   <div class="spreads-gallery-lightbox__backdrop"></div>
   <div class="spreads-gallery-lightbox__content">
-    <button class="spreads-gallery-lightbox__close" aria-label="Close gallery">×</button>
+    <button class="spreads-gallery-lightbox__close" aria-label="Close gallery">CLOSE</button>
     <div class="spreads-gallery-lightbox__image-container">
       <img src="" alt="" class="spreads-gallery-lightbox__image">
-    </div>
-    <div class="spreads-gallery-lightbox__navigation">
-      <div class="spreads-gallery-lightbox__nav-left" aria-label="Previous image"></div>
-      <div class="spreads-gallery-lightbox__nav-right" aria-label="Next image"></div>
+      <div class="spreads-gallery-lightbox__navigation">
+        <div class="spreads-gallery-lightbox__nav-left" aria-label="Previous image"></div>
+        <div class="spreads-gallery-lightbox__nav-right" aria-label="Next image"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -110,7 +110,7 @@
 {% stylesheet %}
 .spreads-gallery {
   width: 100%;
-  margin: 0;
+  margin: 0 0 3rem 0;
   padding: 0;
 }
 
@@ -179,6 +179,7 @@
 }
 
 .spreads-gallery-lightbox__image-container {
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
@@ -187,8 +188,8 @@
 }
 
 .spreads-gallery-lightbox__image {
-    width: 100%;
-    height: auto;
+  width: 100%;
+  height: auto;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
@@ -198,12 +199,16 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  font-size: 40px;
-  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  mix-blend-mode: difference;
   background: none;
   border: none;
   cursor: pointer;
   z-index: 1001;
+  font-family: 'Panama Monospace', monospace;
+  letter-spacing: 1px;
 }
 
 .spreads-gallery-lightbox__navigation {
@@ -256,7 +261,9 @@
 document.addEventListener('DOMContentLoaded', function() {
   const galleryItems = document.querySelectorAll('.spreads-gallery__image-container');
   const lightbox = document.getElementById('spreads-gallery-lightbox');
+  const lightboxBackdrop = document.querySelector('.spreads-gallery-lightbox__backdrop');
   const lightboxImage = document.querySelector('.spreads-gallery-lightbox__image');
+  const lightboxImageContainer = document.querySelector('.spreads-gallery-lightbox__image-container');
   const lightboxClose = document.querySelector('.spreads-gallery-lightbox__close');
   const navLeft = document.querySelector('.spreads-gallery-lightbox__nav-left');
   const navRight = document.querySelector('.spreads-gallery-lightbox__nav-right');
@@ -285,18 +292,21 @@ document.addEventListener('DOMContentLoaded', function() {
   lightboxClose.addEventListener('click', closeLightbox);
   
   // Navigate to previous image
-  navLeft.addEventListener('click', function() {
+  navLeft.addEventListener('click', function(e) {
+    e.stopPropagation(); // Prevent event from bubbling up to backdrop
     navigateGallery(-1);
   });
   
   // Navigate to next image
-  navRight.addEventListener('click', function() {
+  navRight.addEventListener('click', function(e) {
+    e.stopPropagation(); // Prevent event from bubbling up to backdrop
     navigateGallery(1);
   });
   
   // Close lightbox when clicking on backdrop
-  lightbox.addEventListener('click', function(e) {
-    if (e.target === lightbox || e.target.classList.contains('spreads-gallery-lightbox__backdrop')) {
+  lightboxBackdrop.addEventListener('click', function(e) {
+    // Only close if clicking directly on the backdrop, not on the image container
+    if (e.target === lightboxBackdrop) {
       closeLightbox();
     }
   });
