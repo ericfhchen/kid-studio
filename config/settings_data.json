@@ -70,14 +70,12 @@
       "hero-video": {
         "type": "hero-video",
         "settings": {
-          "video_url": "",
-          "heading": "KID. STUDIO"
+          "video_url": "https://cdn.shopify.com/videos/c/o/v/e2354af791eb4c9f98271a00d34dbdd7.mp4"
         }
       },
       "intro-text": {
         "type": "intro-text",
         "settings": {
-          "heading": "GOD BLESS TORONTO commemorates the 10 year anniversary of Kid.",
           "text": "<p>Add your introductory text here. This section can be used to introduce your brand, products, or the specific collection featured on this page.</p>",
           "enable_hover_effect": true,
           "hover_image_width": 300
@@ -85,14 +83,11 @@
       },
       "product-hero": {
         "type": "product-hero",
-        "settings": {
-          "featured_product": ""
-        }
+        "settings": {}
       },
       "product-specs": {
         "type": "product-specs",
         "settings": {
-          "heading": "Product Specifications",
           "description": "<p>273 PP.<br>SOFTCOVER WITH TIP-IN IMAGE.<br>HARDCOVER LINEN SLIP CASE.<br>FOIL LETTERING.<br>EXPOSED SMYTH-SEWN SPINE.</p>"
         }
       },
@@ -119,13 +114,8 @@
       "policies": {
         "type": "policies",
         "settings": {
-          "title": "Policies",
-          "shipping_tab_label": "Shipping Policy",
           "shipping_policy": "<p>Enter your shipping policy details here.</p>",
-          "privacy_tab_label": "Privacy Policy",
-          "privacy_policy": "<p>Enter your privacy policy details here.</p>",
-          "returns_tab_label": "Returns & Refunds",
-          "returns_policy": "<p>Enter your returns and refunds policy details here.</p>"
+          "privacy_policy": "<p>Enter your privacy policy details here.</p>"
         }
       }
     },
