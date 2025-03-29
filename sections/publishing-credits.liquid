@@ -80,13 +80,21 @@
   margin: 0 auto;
 }
 
-.publishing-credits__text span a {
+.publishing-credits__text span a,
+.publishing-credits__text .rte a {
   text-decoration: none;
   color: #000;
 }
 
-.publishing-credits__text span a:hover {
+.publishing-credits__text span a:hover,
+.publishing-credits__text .rte a:hover {
   animation: blink 0.1s linear infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 @media (max-width: 1400px) {
