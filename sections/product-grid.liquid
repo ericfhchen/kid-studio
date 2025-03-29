@@ -24,12 +24,7 @@
               {% endif %}
               
               <div class="product-grid__content">
-                {% comment %} Assign cover type based on product position {% endcomment %}
-                {% if forloop.first %}
-                  {% assign cover_type = 'Cover 01' %}
-                {% else %}
-                  {% assign cover_type = 'Cover 02' %}
-                {% endif %}
+                {% assign cover_type = product.metafields.custom.book_cover_type %}
                 
                 <span class="product-grid__product-title" data-cover-type="{{ cover_type }}">
                   {{ cover_type }}
@@ -203,6 +198,12 @@
 
 {% javascript %}
 document.addEventListener('DOMContentLoaded', function() {
+  // Debug toggle - Uncomment to show debug info
+  // const debugInfo = document.querySelector('.debug-info');
+  // if (debugInfo) {
+  //   debugInfo.style.display = 'block';
+  // }
+  
   // Add to cart functionality
   const buyButtons = document.querySelectorAll('.product-grid__buy-button');
   
@@ -214,8 +215,8 @@ document.addEventListener('DOMContentLoaded', function() {
       // Get the product element to extract metadata
       const productElement = this.closest('.product-grid__item');
       const titleElement = productElement.querySelector('.product-grid__product-title');
-      // Get cover type from data attribute or fallback to text content
-      const bookCoverType = titleElement ? (titleElement.dataset.coverType || titleElement.textContent.trim()) : '';
+      // Get cover type from data attribute
+      const bookCoverType = titleElement ? titleElement.dataset.coverType : '';
       
       console.log('Adding to cart:', {
         variantId,
