@@ -94,13 +94,17 @@
       "product-hero": {
         "type": "product-hero",
         "settings": {
-          "image": "shopify://shop_images/1x1Cereal_slip_insidebook_whitebackdrop.jpg"
+          "image": "shopify://shop_images/1x1Cereal_slip_insidebook_whitebackdrop.jpg",
+          "image_container_width_desktop": 50,
+          "image_container_width_mobile": 100
         }
       },
       "product-specs": {
         "type": "product-specs",
         "settings": {
-          "description": "<p>273 PP.<br/>SOFTCOVER WITH TIP-IN IMAGE.<br/>HARDCOVER LINEN SLIP CASE.<br/>FOIL LETTERING.<br/>EXPOSED SMYTH-SEWN SPINE.</p>"
+          "description": "<p>273 PP.<br/>SOFTCOVER WITH TIP-IN IMAGE.<br/>HARDCOVER LINEN SLIP CASE.<br/>FOIL LETTERING.<br/>EXPOSED SMYTH-SEWN SPINE.</p>",
+          "content_width_desktop": 70,
+          "content_width_mobile": 100
         }
       },
       "product-grid": {
