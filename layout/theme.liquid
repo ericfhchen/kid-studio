@@ -23,12 +23,81 @@
 
   {{ 'application.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'application.js' | asset_url }}" defer></script>
+  
+  {% if settings.enable_splash_page %}
+  <style>
+    html, body {
+      overflow: hidden !important;
+      height: 100% !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  </style>
+  {% endif %}
 </head>
 
 <body class="template-{{ template.name | handle }}">
-  {% section 'splash-page' %}
-  <main role="main" id="MainContent">
-    {{ content_for_layout }}
-  </main>
+  {% if settings.enable_splash_page %}
+    {% section 'splash-page' %}
+  {% else %}
+    <main role="main" id="MainContent">
+      {{ content_for_layout }}
+    </main>
+  {% endif %}
+  
+  {% if settings.enable_splash_page %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Prevent inspection bypass
+      function preventInspectionBypass() {
+        // Check if splash page exists
+        const splashPage = document.querySelector('.splash-page');
+        if (!splashPage) {
+          location.reload();
+          return;
+        }
+        
+        // Prevent keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+          // Prevent F12, Ctrl+Shift+I, Cmd+Opt+I, Ctrl+Shift+C
+          if (
+            e.keyCode === 123 || 
+            (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 67)) ||
+            (e.metaKey && e.altKey && e.keyCode === 73)
+          ) {
+            e.preventDefault();
+          }
+        });
+        
+        // Prevent right-click
+        document.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+        });
+        
+        // Prevent touch scrolling
+        document.addEventListener('touchmove', function(e) {
+          e.preventDefault();
+        }, { passive: false });
+        
+        // Set up mutation observer to detect DOM changes
+        const observer = new MutationObserver(function() {
+          // Check if splash page is still in DOM
+          if (!document.querySelector('.splash-page')) {
+            location.reload();
+          }
+        });
+        
+        // Start observing the document
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true
+        });
+      }
+      
+      preventInspectionBypass();
+    });
+  </script>
+  {% endif %}
 </body>
 </html> 
