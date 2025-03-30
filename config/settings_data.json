@@ -102,7 +102,7 @@
       "product-specs": {
         "type": "product-specs",
         "settings": {
-          "description": "<p>264 PP.<br/>SOFTCOVER WITH TIP-IN IMAGE. <br/>HARDCOVER LINEN SLIP CASE.<br/>FOIL STAMP.<br/>EXPOSED SMYTH-SEWN SPINE.</p><p>FORMAT 9X12</p><p>ISBN 978-1-0692135-0-1</p>",
+          "description": "<p>264 PP.<br/>SOFTCOVER WITH TIP-IN IMAGE. <br/>HARDCOVER LINEN SLIP CASE.<br/>FOIL STAMP LETTERING.<br/>EXPOSED SMYTH-SEWN SPINE.</p><p>FORMAT 9X12</p><p>ISBN 978-1-0692135-0-1</p>",
           "content_width_desktop": 70,
           "content_width_mobile": 100
         }
@@ -141,26 +141,110 @@
           "image_9LCGc3": {
             "type": "image",
             "settings": {
-              "image": "shopify://shop_images/10.jpg"
+              "image": "shopify://shop_images/38.png"
             }
           },
           "image_CQPWq4": {
             "type": "image",
             "settings": {
-              "image": "shopify://shop_images/20.jpg"
+              "image": "shopify://shop_images/111.png"
             }
           },
           "image_PbTGFN": {
             "type": "image",
             "settings": {
-              "image": "shopify://shop_images/24.jpg"
+              "image": "shopify://shop_images/47.png"
+            }
+          },
+          "image_4PidiX": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/116.png"
+            }
+          },
+          "image_brA8gL": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/54.png"
+            }
+          },
+          "image_eacYty": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/61.png"
+            }
+          },
+          "image_G8bdNf": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/62.png"
+            }
+          },
+          "image_YNFtiY": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/79.png"
+            }
+          },
+          "image_mtHLVE": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/20.png"
+            }
+          },
+          "image_8zkwgq": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/103.png"
+            }
+          },
+          "image_DpBqhi": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/10.png"
+            }
+          },
+          "image_4qVbfj": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/76.png"
+            }
+          },
+          "image_akYTGA": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/60.png"
+            }
+          },
+          "image_7G7mpQ": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/24.png"
+            }
+          },
+          "image_UiYJTA": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/91.png"
             }
           }
         },
         "block_order": [
           "image_9LCGc3",
           "image_CQPWq4",
-          "image_PbTGFN"
+          "image_PbTGFN",
+          "image_4PidiX",
+          "image_brA8gL",
+          "image_eacYty",
+          "image_G8bdNf",
+          "image_YNFtiY",
+          "image_mtHLVE",
+          "image_8zkwgq",
+          "image_DpBqhi",
+          "image_4qVbfj",
+          "image_akYTGA",
+          "image_7G7mpQ",
+          "image_UiYJTA"
         ],
         "settings": {}
       },
