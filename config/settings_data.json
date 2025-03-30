@@ -95,14 +95,14 @@
         "type": "product-hero",
         "settings": {
           "image": "shopify://shop_images/1x1Cereal_slip_insidebook_whitebackdrop.jpg",
-          "image_container_width_desktop": 50,
+          "image_container_width_desktop": 75,
           "image_container_width_mobile": 100
         }
       },
       "product-specs": {
         "type": "product-specs",
         "settings": {
-          "description": "<p>273 PP.<br/>SOFTCOVER WITH TIP-IN IMAGE.<br/>HARDCOVER LINEN SLIP CASE.<br/>FOIL LETTERING.<br/>EXPOSED SMYTH-SEWN SPINE.</p>",
+          "description": "<p>264 PP.</p><p>FORMAT 9X12<br/>SOFTCOVER WITH TIP-IN IMAGE. <br/>HARDCOVER LINEN SLIP CASE.<br/>FOIL STAMP LETTERING.<br/>EXPOSED SMYTH-SEWN SPINE.</p><p>PRINTED IN TORONTO.</p><p>ISBN 978-1-0692135-0-1</p>",
           "content_width_desktop": 70,
           "content_width_mobile": 100
         }
@@ -125,13 +125,13 @@
         "type": "publishing-credits",
         "settings": {
           "title": "Publishing Credits",
-          "text": "<p>PUBLISHING CREDITS. Kid. Studio ©2025. Designed by Alex Doe. Produced by Jordan Smith. Editing by Taylor Lee. Featuring contributions from 30 contributors, including Chris Brown, Jamie Fox, Morgan Reed, Sam Carter, Riley Adams, Jordan Blake, Taylor Hill, Alex Kim, Cameron White, Avery Scott, Devon James, Drew Morgan, Casey Bennett, Logan West, Peyton Gray, Sydney Clark, Blake Harper, Jesse Lane, Dylan Fox, Quinn Brooks, Reese Parker, Skylar Collins, Corey Bell, Alex Rivera, Jamie Stone, Robin Myers, Cameron Dawson, Tyler Green, Hayden Fisher, and Riley Moore.</p><p></p><p>Website by <a href=\"https://left.systems\" target=\"_blank\">LEFT</a>.</p>"
+          "text": "<p>Published by Kid. Studio Press & HPLA Publishing ©2025 Editors: Glenn Michael, Vince Tran, Sebastián Rodriguez-Besa. Introduction by Adam Wray. Conversation by Adam Wray, Glenn Michael, Vince Tran. Creative Direction by Sebastián Rodriguez-Besa. Graphic by Teiji. 3D by Moses Petros. Project Management, Erika Lindberg. Brand Partnerships & Business Dev, Patrick Silverio. Printed In Toronto. Website by <a href=\"https://left.systems\" target=\"_blank\">LEFT</a>.</p>"
         }
       },
       "policies": {
         "type": "policies",
         "settings": {
-          "shipping_policy": "<p>SHIPPING & RETURNS. We ship worldwide from our studio. All orders are processed within 3-5 business days, excluding weekends and holidays. Once your order is shipped, you will receive a confirmation email with tracking information. Shipping Rates & Delivery Times. Domestic (within Canada): Standard shipping takes 3-7 business days. Expedited options available at checkout. International: Delivery times vary by location but typically take 7-21 business days. Customs processing may cause delays beyond our control. Duties & Taxes: International customers are responsible for any customs fees or duties incurred upon delivery. We are not responsible for lost, stolen, or delayed packages once they are in the carrier’s possession. Please contact the shipping provider for any delivery concerns. RETURNS & EXCHANGES. We accept returns and exchanges within 14 days of delivery for items in unworn, original condition with all tags attached. To initiate a return, email info@kidstudio.co with your order number and reason for return. Wait for confirmation and return instructions. Ship the item back to us at your expense. We recommend using a trackable service. Once received and inspected, refunds will be processed to the original payment method within 5-7 business days. Shipping fees are non-refundable.</p>",
+          "shipping_policy": "<p>SHIPPING & RETURNS. We ship worldwide from our studio. All orders are processed within 3-5 business days, excluding weekends and holidays. Once your order is shipped, you will receive a confirmation email with tracking information. Shipping Rates & Delivery Times. Domestic (within Canada): Standard shipping takes 3-7 business days. Expedited options available at checkout. International: Delivery times vary by location but typically take 7-21 business days. Customs processing may cause delays beyond our control. Duties & Taxes: International customers are responsible for any customs fees or duties incurred upon delivery. We are not responsible for lost, stolen, or delayed packages once they are in the carrier’s possession. Please contact the shipping provider for any delivery concerns. RETURNS & EXCHANGES. We accept returns and exchanges within 7 days of delivery for items in unworn, original condition with all tags attached. To initiate a return, email email@kidstudio.co with your order number and reason for return. Wait for confirmation and return instructions. Ship the item back to us at your expense. We recommend using a trackable service. Once received and inspected, refunds will be processed to the original payment method within 5-7 business days. Shipping fees are non-refundable.</p>",
           "privacy_policy": "<p>PRIVACY POLICY. At Kid. Studio, we value your privacy and are committed to protecting your personal data. This policy outlines how we collect, use, and safeguard your information when you visit our website. INFORMATION WE COLLECT. Personal Information. Name, email, shipping/billing address, phone number, and payment details. Automatically Collected Data. IP address, browser type, and site usage analytics. Cookies & Tracking Technologies. We use cookies to enhance user experience and improve our services. How We Use Our Information. We use your data to: Process and fulfill orders. Communicate updates about your purchase. Improve our website and services Prevent fraud and secure transactions. We do not sell or share your personal data with third parties for marketing purposes. DATA SECURITY. We implement industry-standard security measures to protect your information. However, no online transmission is 100% secure, so please shop with confidence but remain mindful. YOUR RIGHTS. You may request access, corrections, or deletion of your data by contacting us at info@kidstudio.co. You can also opt out of marketing emails at any time. CONTACT US. For any questions regarding shipping, returns, or privacy, reach out to info@kidstudio.co.</p>"
         }
       },
@@ -141,26 +141,110 @@
           "image_9LCGc3": {
             "type": "image",
             "settings": {
-              "image": "shopify://shop_images/10.jpg"
+              "image": "shopify://shop_images/38.png"
             }
           },
           "image_CQPWq4": {
             "type": "image",
             "settings": {
-              "image": "shopify://shop_images/20.jpg"
+              "image": "shopify://shop_images/111.png"
             }
           },
           "image_PbTGFN": {
             "type": "image",
             "settings": {
-              "image": "shopify://shop_images/24.jpg"
+              "image": "shopify://shop_images/47.png"
+            }
+          },
+          "image_4PidiX": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/116.png"
+            }
+          },
+          "image_brA8gL": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/54.png"
+            }
+          },
+          "image_eacYty": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/61.png"
+            }
+          },
+          "image_G8bdNf": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/62.png"
+            }
+          },
+          "image_YNFtiY": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/79.png"
+            }
+          },
+          "image_mtHLVE": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/20.png"
+            }
+          },
+          "image_8zkwgq": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/103.png"
+            }
+          },
+          "image_DpBqhi": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/10.png"
+            }
+          },
+          "image_4qVbfj": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/76.png"
+            }
+          },
+          "image_akYTGA": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/60.png"
+            }
+          },
+          "image_7G7mpQ": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/24.png"
+            }
+          },
+          "image_UiYJTA": {
+            "type": "image",
+            "settings": {
+              "image": "shopify://shop_images/91.png"
             }
           }
         },
         "block_order": [
           "image_9LCGc3",
           "image_CQPWq4",
-          "image_PbTGFN"
+          "image_PbTGFN",
+          "image_4PidiX",
+          "image_brA8gL",
+          "image_eacYty",
+          "image_G8bdNf",
+          "image_YNFtiY",
+          "image_mtHLVE",
+          "image_8zkwgq",
+          "image_DpBqhi",
+          "image_4qVbfj",
+          "image_akYTGA",
+          "image_7G7mpQ",
+          "image_UiYJTA"
         ],
         "settings": {}
       },
