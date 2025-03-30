@@ -21,6 +21,7 @@
     "font_size_heading_base": 28,
     "font_body": "helvetica_n4",
     "font_size_body_base": 16,
+    "favicon": "shopify://shop_images/Screenshot_2025-03-30_at_4.10.01_PM.png",
     "enable_splash_page": false,
     "sections": {
       "header": {
@@ -125,7 +126,7 @@
         "type": "publishing-credits",
         "settings": {
           "title": "Publishing Credits",
-          "text": "<p>Published by <a href=\"https://kidstudio.co\" title=\"https://kidstudio.co\">Kid. Studio Press</a> & <a href=\"https://hpla.co\" title=\"https://hpla.co\">HPLA</a> Publishing ©2025. Printed In Toronto. Editors: Glenn Michael, Vince Tran, Sebastián Rodriguez-Besa. Introduction by Adam Wray. Conversation by Adam Wray, Glenn Michael, Vince Tran. Editorial Design & Creative Direction by <a href=\"https://sebastianrodriguez.ch/\" title=\"https://sebastianrodriguez.ch/\">Sebastián Rodriguez-Besa</a>. 3D Direction & Rendering by Moses Petros. Graphic Art Direction by Teiji. Brand Partnerships & Business Dev by Patrick Silverio. Project Management by <a href=\"https://erikalindberg.com/\" title=\"https://erikalindberg.com/\">Erika Lindberg</a>.  Website by <a href=\"https://left.systems\" target=\"_blank\">LEFT</a>.</p>"
+          "text": "<p>Published by <a href=\"https://kidstudio.co\" title=\"https://kidstudio.co\">Kid. Studio Press</a> & <a href=\"https://hpla.co\" title=\"https://hpla.co\">HPLA</a> Publishing ©2025. Printed In Toronto. Editors: Glenn Michael, Vince Tran, <a href=\"https://sebastianrodriguez.ch/\" target=\"_blank\" title=\"https://sebastianrodriguez.ch/\">Sebastián Rodriguez-Besa</a>. Introduction by Adam Wray. Conversation by Adam Wray, Glenn Michael, Vince Tran. Editorial Design & Creative Direction by <a href=\"https://sebastianrodriguez.ch/\" target=\"_blank\" title=\"https://sebastianrodriguez.ch/\">Sebastián Rodriguez-Besa</a>. 3D Direction & Rendering by Moses Petros. Graphic Art Direction by Teiji. Brand Partnerships & Business Dev by Patrick Silverio. Project Management by <a href=\"https://erikalindberg.com/\" title=\"https://erikalindberg.com/\">Erika Lindberg</a>.  Website by <a href=\"https://left.systems\" target=\"_blank\">LEFT</a>.</p>"
         }
       },
       "policies": {
