@@ -16,9 +16,7 @@
             </div>
             <div class="cart__item-details">
               <h3 class="cart__item-title">{{ item.product.title }}</h3>
-              {% if item.product.metafields.category.book_cover_type %}
-                <p class="cart__item-metafield">{{ item.product.metafields.category.book_cover_type }}</p>
-              {% endif %}
+              
               <p class="cart__item-price">{{ item.price | money }}</p>
               <div class="cart__item-quantity">
                 <button class="cart__item-quantity-decrease" aria-label="Decrease quantity">-</button>
