@@ -167,8 +167,7 @@
       "splash-page": {
         "type": "splash-page",
         "settings": {
-          "desktop_image": "shopify://shop_images/SPLASH_PAGE_PLACEHOLDER.svg",
-          "mobile_image": "shopify://shop_images/Web-splash-mobile.jpg"
+          "desktop_image": "shopify://shop_images/SPLASH_PAGE_PLACEHOLDER.svg"
         }
       }
     },
