@@ -118,6 +118,7 @@
   width: 100%;
   margin: 0 0 3rem 0;
   padding: 0;
+  background-color: #000000;
 }
 
 .spreads-gallery__grid {
@@ -125,6 +126,7 @@
   grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
   width: 100%;
   gap: 0; /* No gap between images */
+  background-color: #000000;
 }
 
 .spreads-gallery__item {
@@ -248,6 +250,15 @@
   .spreads-gallery__grid {
     grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
   }
+  
+  /* Apply special styling for the last item when there's an odd number */
+  .spreads-gallery__grid.odd-count > .spreads-gallery__item:last-child {
+    grid-column: 1 / span 2; /* Span both columns */
+    max-width: 50%;
+    margin: 0 auto; /* Center the item */
+    background-color: #000000; /* Black background */
+  }
+  
   .spreads-gallery-lightbox__content {
     width: 100%;
     max-width: 100%;
@@ -277,8 +288,16 @@ document.addEventListener('DOMContentLoaded', function() {
   const navLeft = document.querySelector('.spreads-gallery-lightbox__nav-left');
   const navRight = document.querySelector('.spreads-gallery-lightbox__nav-right');
   
+  // Add class to grid if there's an odd number of items
+  const galleryGrid = document.querySelector('.spreads-gallery__grid');
+  const itemCount = document.querySelectorAll('.spreads-gallery__item').length;
+  if (itemCount % 2 !== 0) {
+    galleryGrid.classList.add('odd-count');
+  }
+  
   let currentIndex = 0;
   const galleryImages = [];
+  const preloadedImages = {};
   
   // Determine if we're on a device that can handle high-resolution images
   const isHighResDevice = window.innerWidth > 1024;
@@ -300,6 +319,30 @@ document.addEventListener('DOMContentLoaded', function() {
       alt: image.alt
     });
   });
+  
+  // Preload images when the page loads
+  function preloadImage(index) {
+    if (!preloadedImages[index] && galleryImages[index]) {
+      preloadedImages[index] = new Image();
+      preloadedImages[index].src = galleryImages[index].src;
+    }
+  }
+  
+  // Preload first few images on page load
+  if (galleryImages.length > 0) {
+    // Preload the first image
+    preloadImage(0);
+    
+    // Preload the second image if available
+    if (galleryImages.length > 1) {
+      preloadImage(1);
+    }
+    
+    // Preload the last image if there are more than 2 images
+    if (galleryImages.length > 2) {
+      preloadImage(galleryImages.length - 1);
+    }
+  }
   
   // Open lightbox when clicking on an image
   galleryItems.forEach(item => {
@@ -348,17 +391,40 @@ document.addEventListener('DOMContentLoaded', function() {
   function openLightbox(index) {
     if (galleryImages.length === 0) return;
     
-    const image = galleryImages[index];
+    currentIndex = index;
     
-    // Preload the image to ensure smooth transition
-    const preloadImg = new Image();
-    preloadImg.src = image.src;
+    // Create a placeholder image while loading
+    lightboxImage.style.opacity = 0;
     
-    preloadImg.onload = function() {
-      lightboxImage.src = image.src;
-      lightboxImage.alt = image.alt;
-      lightboxImage.style.opacity = 1;
-    };
+    // Set empty src first to prevent showing old image
+    if (!preloadedImages[index] || !preloadedImages[index].complete) {
+      lightboxImage.removeAttribute('src');
+    }
+    
+    // Ensure the image for this index is preloaded
+    if (!preloadedImages[index]) {
+      preloadImage(index);
+    }
+    
+    // If the image is already preloaded and complete, show it immediately
+    if (preloadedImages[index] && preloadedImages[index].complete) {
+      displayImage(index);
+    } else {
+      // Otherwise, wait for it to load
+      preloadedImages[index].onload = function() {
+        displayImage(index);
+      };
+      
+      // Fallback in case the onload doesn't fire
+      setTimeout(function() {
+        if (lightboxImage.style.opacity === '0') {
+          displayImage(index);
+        }
+      }, 300);
+    }
+    
+    // Preload adjacent images for smoother navigation
+    preloadAdjacentImages(index);
     
     // Prevent scrolling when lightbox is open
     document.body.style.overflow = 'hidden';
@@ -367,37 +433,76 @@ document.addEventListener('DOMContentLoaded', function() {
     lightbox.classList.add('active');
   }
   
+  function displayImage(index) {
+    if (currentIndex !== index) return; // Avoid race conditions
+    
+    lightboxImage.src = galleryImages[index].src;
+    lightboxImage.alt = galleryImages[index].alt;
+    
+    // Force browser to recognize the new image before fading in
+    setTimeout(function() {
+      lightboxImage.style.opacity = 1;
+    }, 10);
+  }
+  
+  function preloadAdjacentImages(index) {
+    // Preload next image
+    const nextIndex = (index + 1) % galleryImages.length;
+    preloadImage(nextIndex);
+    
+    // Preload previous image
+    const prevIndex = (index - 1 + galleryImages.length) % galleryImages.length;
+    preloadImage(prevIndex);
+  }
+  
   function closeLightbox() {
     lightbox.classList.remove('active');
     document.body.style.overflow = '';
   }
   
   function navigateGallery(direction) {
-    currentIndex = (currentIndex + direction + galleryImages.length) % galleryImages.length;
+    // Calculate the new index and ensure it's in bounds
+    const newIndex = (currentIndex + direction + galleryImages.length) % galleryImages.length;
     
-    const image = galleryImages[currentIndex];
-    
-    // Fade effect for smoother transition
+    // Fade out current image
     lightboxImage.style.opacity = 0;
     
-    // Preload the next image
-    const preloadImg = new Image();
-    preloadImg.src = image.src;
-    
-    preloadImg.onload = function() {
-      lightboxImage.src = image.src;
-      lightboxImage.alt = image.alt;
-      lightboxImage.style.opacity = 1;
-    };
-    
-    // If the image takes too long to load, apply it anyway after a short timeout
-    setTimeout(() => {
-      if (lightboxImage.style.opacity === '0') {
-        lightboxImage.src = image.src;
-        lightboxImage.alt = image.alt;
-        lightboxImage.style.opacity = 1;
+    // Small delay before switching to the new image
+    setTimeout(function() {
+      // If the image is already preloaded and complete, switch immediately
+      if (preloadedImages[newIndex] && preloadedImages[newIndex].complete) {
+        currentIndex = newIndex;
+        displayImage(newIndex);
+      } else {
+        // Remove src temporarily to avoid showing previous image
+        lightboxImage.removeAttribute('src');
+        
+        // Ensure the image is preloaded
+        if (!preloadedImages[newIndex]) {
+          preloadImage(newIndex);
+        }
+        
+        // Update current index before the image loads
+        currentIndex = newIndex;
+        
+        // Wait for the image to load
+        preloadedImages[newIndex].onload = function() {
+          if (currentIndex === newIndex) { // Ensure we're still on this index
+            displayImage(newIndex);
+          }
+        };
+        
+        // Fallback in case onload doesn't fire
+        setTimeout(function() {
+          if (currentIndex === newIndex && lightboxImage.style.opacity === '0') {
+            displayImage(newIndex);
+          }
+        }, 300);
       }
-    }, 300);
+      
+      // Preload adjacent images for next navigation
+      preloadAdjacentImages(newIndex);
+    }, 250); // 250ms transition for fade out
   }
 });
 {% endjavascript %} 
