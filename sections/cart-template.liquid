@@ -16,7 +16,6 @@
             </div>
             <div class="cart__item-details">
               <h3 class="cart__item-title">{{ item.product.title }}</h3>
-              
               <p class="cart__item-price">{{ item.price | money }}</p>
               <div class="cart__item-quantity">
                 <button class="cart__item-quantity-decrease" aria-label="Decrease quantity">-</button>
@@ -143,14 +142,17 @@
 .cart__item-details {
   flex-grow: 1;
   text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .cart__item-details > * {
   line-height: 1.25;
+  margin: 0;
 }
 
-.cart__item-title, .cart__item-price, .cart__item-metafield, .cart__item-remove {
-  margin: 0;
+.cart__item-title, .cart__item-price, .cart__item-remove {
   font-family: 'Panama Monospace', monospace !important;
   font-size: 0.75rem !important;
   text-transform: uppercase;
@@ -170,12 +172,14 @@
 .cart__item-quantity {
   display: flex;
   align-items: center;
+  gap: 0.25rem;
+  margin: 0.25rem 0;
 }
 
 .cart__item-quantity-decrease,
 .cart__item-quantity-increase {
-  width: 1rem;
-  height: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -189,15 +193,16 @@
   appearance: none;
   color: #000000;
   border-radius: 0;
+  padding: 0;
 }
 
 .cart__item-quantity-input {
-  width: 1rem;
-  height: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
   text-align: center;
   border: none !important;
   margin: 0;
-  padding: 2px 0;
+  padding: 0;
   font-family: 'Panama Monospace', monospace !important;
   font-size: 0.75rem !important;
   -webkit-appearance: none;
@@ -208,14 +213,39 @@
   border-radius: 0;
 }
 
-.cart__item-quantity-input::-webkit-outer-spin-button,
-.cart__item-quantity-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+/* Mobile Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .cart__item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin: 0.25rem 0;
+    -webkit-appearance: none;
+    appearance: none;
+  }
 
-.cart__item-quantity-input {
-  -moz-appearance: textfield; /* Firefox */
+  .cart__item-quantity-decrease,
+  .cart__item-quantity-increase,
+  .cart__item-quantity-input {
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cart__item-quantity-input {
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
 }
 
 .cart__footer {
