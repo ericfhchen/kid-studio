@@ -22,7 +22,7 @@
     "font_body": "helvetica_n4",
     "font_size_body_base": 16,
     "favicon": "shopify://shop_images/Screenshot_2025-03-30_at_4.10.01_PM.png",
-    "enable_splash_page": false,
+    "enable_splash_page": true,
     "sections": {
       "header": {
         "type": "header",
@@ -114,12 +114,6 @@
           "title": "Our Products",
           "collection": "",
           "products_limit": 4
-        }
-      },
-      "gallery": {
-        "type": "gallery",
-        "settings": {
-          "title": "Gallery"
         }
       },
       "publishing-credits": {
