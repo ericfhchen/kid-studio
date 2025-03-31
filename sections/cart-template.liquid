@@ -12,7 +12,7 @@
         {% for item in cart.items %}
           <div class="cart__item" data-variant-id="{{ item.variant_id }}">
             <div class="cart__item-image">
-              <img src="{{ item.image | img_url: '200x' }}" alt="{{ item.title | escape }}">
+              <img src="{{ item.image | img_url: '400x' }}" alt="{{ item.title | escape }}">
             </div>
             <div class="cart__item-details">
               <h3 class="cart__item-title">{{ item.product.title }}</h3>
