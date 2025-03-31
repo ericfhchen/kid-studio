@@ -22,7 +22,7 @@
     "font_body": "helvetica_n4",
     "font_size_body_base": 16,
     "favicon": "shopify://shop_images/Screenshot_2025-03-30_at_4.10.01_PM.png",
-    "enable_splash_page": true,
+    "enable_splash_page": false,
     "sections": {
       "header": {
         "type": "header",
@@ -103,7 +103,7 @@
       "product-specs": {
         "type": "product-specs",
         "settings": {
-          "description": "<p>264 PP.</p><p>FORMAT 9X12<br/>FIRST EDITION, LIMITED RUN.<br/>4 COVER VARIATIONS.<br/>SOFTCOVER WITH TIP-IN IMAGE. <br/>HARDCOVER LINEN SLIP CASE.<br/>FOIL STAMP LETTERING.<br/>EXPOSED SMYTH-SEWN SPINE.</p><p>ISBN 978-1-0692135-0-1</p>",
+          "description": "<p>PREORDER</p><p>DELIVERS IN 2-4 WEEKS<br/></p><p>264 PP.</p><p>FORMAT 9X12<br/>FIRST EDITION, LIMITED RUN.<br/>4 COVER VARIATIONS.<br/>SOFTCOVER WITH TIP-IN IMAGE. <br/>HARDCOVER LINEN SLIP CASE.<br/>FOIL STAMP LETTERING.<br/>EXPOSED SMYTH-SEWN SPINE.</p><p>ISBN 978-1-0692135-0-1</p>",
           "content_width_desktop": 70,
           "content_width_mobile": 100
         }
