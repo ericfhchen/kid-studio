@@ -95,8 +95,8 @@
       "product-hero": {
         "type": "product-hero",
         "settings": {
-          "image": "shopify://shop_images/GBT-slipcase_whitebackdrop.png",
-          "image_container_width_desktop": 100,
+          "image": "shopify://shop_images/GBT-slipcase-square.png",
+          "image_container_width_desktop": 75,
           "image_container_width_mobile": 100
         }
       },
