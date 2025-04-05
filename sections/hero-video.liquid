@@ -71,41 +71,51 @@
 
 {% javascript %}
 document.addEventListener('DOMContentLoaded', function() {
+  // Find the video element with the hero-video__video class
   const videoElement = document.querySelector('.hero-video__video');
   
+  // If video element exists, try multiple approaches to force playback
   if (videoElement) {
-    // Force autoplay attributes
-    videoElement.autoplay = true;
-    videoElement.muted = true;
-    videoElement.playsInline = true;
-    videoElement.setAttribute('playsinline', '');
-    videoElement.setAttribute('webkit-playsinline', '');
-    
-    // Function to attempt playing the video
-    const attemptPlay = function() {
-      videoElement.play().catch(function(error) {
-        console.log('Autoplay failed:', error);
+    // Approach 1: Direct play
+    videoElement.play()
+      .catch(error => {
+        console.log('Initial autoplay attempt failed:', error);
         
-        // Try again with user interaction
-        document.body.addEventListener('touchstart', function() {
-          videoElement.play().catch(function(e) {
-            console.log('Play attempt after user interaction failed:', e);
+        // Approach 2: Add muted attribute which often allows autoplay
+        videoElement.muted = true;
+        
+        // Approach 3: Simulate user interaction
+        setTimeout(() => {
+          // Create and dispatch a touch/click event
+          const touchEvent = new TouchEvent('touchstart', {
+            bubbles: true,
+            cancelable: true,
+            view: window
           });
-        }, { once: true });
+          
+          document.body.dispatchEvent(touchEvent);
+          
+          // Try playing again after simulated interaction
+          videoElement.play()
+            .catch(e => console.log('Autoplay still failed after simulated interaction:', e));
+        }, 100);
       });
+    
+    // Approach 4: Add playsinline attribute which helps on iOS
+    videoElement.setAttribute('playsinline', '');
+    
+    // Approach 5: Listen for first user interaction to play video
+    const playVideoOnInteraction = function() {
+      videoElement.play();
+      // Remove event listeners after first interaction
+      document.removeEventListener('click', playVideoOnInteraction);
+      document.removeEventListener('touchstart', playVideoOnInteraction);
     };
     
-    // Try to play immediately
-    attemptPlay();
-    
-    // Also try when the page becomes visible (for Instagram in-app browser)
-    document.addEventListener('visibilitychange', function() {
-      if (document.visibilityState === 'visible') {
-        attemptPlay();
-      }
-    });
+    document.addEventListener('click', playVideoOnInteraction);
+    document.addEventListener('touchstart', playVideoOnInteraction);
   }
 });
 
-// Hero video specific JavaScript can go here
+
 {% endjavascript %} 
