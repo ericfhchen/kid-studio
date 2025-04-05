@@ -85,103 +85,170 @@ document.addEventListener('DOMContentLoaded', function() {
     videoElement.setAttribute('x5-video-orientation', 'portraint');
     videoElement.setAttribute('preload', 'auto');
     
-    // Approach 1: Direct play with muted attribute
+    // Force muted attribute which is often required for autoplay
     videoElement.muted = true;
-    videoElement.play()
-      .catch(error => {
-        console.log('Initial autoplay attempt failed:', error);
-        
-        // Approach 2: Try playing with a slight delay
-        setTimeout(() => {
-          videoElement.play()
-            .catch(e => console.log('Delayed autoplay attempt failed:', e));
-        }, 100);
-        
-        // Approach 3: Try playing after a user interaction event
-        const playOnInteraction = function() {
-          videoElement.play();
-          // Remove event listeners after first interaction
-          document.removeEventListener('click', playOnInteraction);
-          document.removeEventListener('touchstart', playOnInteraction);
-          document.removeEventListener('scroll', playOnInteraction);
-        };
-        
-        document.addEventListener('click', playOnInteraction);
-        document.addEventListener('touchstart', playOnInteraction);
-        document.addEventListener('scroll', playOnInteraction);
-        
-        // Approach 4: Try playing after a visibility change
-        document.addEventListener('visibilitychange', function() {
-          if (document.visibilityState === 'visible') {
-            videoElement.play();
+    
+    // Create a backup video element that we'll use if the main one fails
+    const backupVideo = document.createElement('video');
+    backupVideo.className = 'hero-video__video-backup';
+    backupVideo.style.display = 'none';
+    backupVideo.setAttribute('autoplay', '');
+    backupVideo.setAttribute('loop', '');
+    backupVideo.setAttribute('muted', '');
+    backupVideo.setAttribute('playsinline', '');
+    backupVideo.setAttribute('webkit-playsinline', '');
+    backupVideo.setAttribute('x5-playsinline', '');
+    backupVideo.setAttribute('x5-video-player-type', 'h5');
+    backupVideo.setAttribute('x5-video-player-fullscreen', 'true');
+    backupVideo.setAttribute('x5-video-orientation', 'portraint');
+    backupVideo.setAttribute('preload', 'auto');
+    
+    // Copy the source from the original video
+    const originalSource = videoElement.querySelector('source');
+    if (originalSource) {
+      const newSource = document.createElement('source');
+      newSource.src = originalSource.src;
+      newSource.type = originalSource.type;
+      backupVideo.appendChild(newSource);
+    }
+    
+    // Add the backup video to the DOM
+    videoElement.parentNode.appendChild(backupVideo);
+    
+    // Function to try playing the video with various techniques
+    const tryPlayVideo = function(video) {
+      // Try direct play
+      video.play()
+        .catch(error => {
+          console.log('Direct play failed:', error);
+          
+          // Try with a slight delay
+          setTimeout(() => {
+            video.play()
+              .catch(e => console.log('Delayed play failed:', e));
+          }, 100);
+          
+          // Try with a longer delay
+          setTimeout(() => {
+            video.play()
+              .catch(e => console.log('Longer delayed play failed:', e));
+          }, 500);
+          
+          // Try with a much longer delay
+          setTimeout(() => {
+            video.play()
+              .catch(e => console.log('Much longer delayed play failed:', e));
+          }, 2000);
+        });
+    };
+    
+    // Try playing the original video first
+    tryPlayVideo(videoElement);
+    
+    // Try playing the backup video after a short delay
+    setTimeout(() => {
+      tryPlayVideo(backupVideo);
+    }, 300);
+    
+    // Create a function to simulate user interaction
+    const simulateUserInteraction = function() {
+      // Create a fake click event
+      const clickEvent = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true
+      });
+      
+      // Dispatch the event on the document
+      document.dispatchEvent(clickEvent);
+      
+      // Also try to play the video directly
+      videoElement.play().catch(e => console.log('Play after simulated click failed:', e));
+      backupVideo.play().catch(e => console.log('Backup play after simulated click failed:', e));
+    };
+    
+    // Try simulating user interaction after a delay
+    setTimeout(simulateUserInteraction, 400);
+    
+    // Try a more aggressive approach - create a new video element dynamically
+    setTimeout(() => {
+      // Create a completely new video element
+      const newVideo = document.createElement('video');
+      newVideo.className = 'hero-video__video-new';
+      newVideo.style.width = '100%';
+      newVideo.style.height = '100%';
+      newVideo.style.objectFit = 'cover';
+      newVideo.setAttribute('autoplay', '');
+      newVideo.setAttribute('loop', '');
+      newVideo.setAttribute('muted', '');
+      newVideo.setAttribute('playsinline', '');
+      newVideo.setAttribute('webkit-playsinline', '');
+      newVideo.setAttribute('x5-playsinline', '');
+      newVideo.setAttribute('x5-video-player-type', 'h5');
+      newVideo.setAttribute('x5-video-player-fullscreen', 'true');
+      newVideo.setAttribute('x5-video-orientation', 'portraint');
+      newVideo.setAttribute('preload', 'auto');
+      
+      // Copy the source from the original video
+      if (originalSource) {
+        const newSource = document.createElement('source');
+        newSource.src = originalSource.src + (originalSource.src.includes('?') ? '&' : '?') + 't=' + Date.now();
+        newSource.type = originalSource.type;
+        newVideo.appendChild(newSource);
+      }
+      
+      // Add the new video to the DOM
+      videoElement.parentNode.appendChild(newVideo);
+      
+      // Try to play the new video
+      newVideo.play().catch(e => console.log('New video play failed:', e));
+      
+      // Hide the original video if the new one plays successfully
+      newVideo.addEventListener('playing', function() {
+        videoElement.style.display = 'none';
+        backupVideo.style.display = 'none';
+      });
+    }, 600);
+    
+    // Try using the Intersection Observer API to play when visible
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            videoElement.play().catch(e => console.log('Play on intersection failed:', e));
+            backupVideo.play().catch(e => console.log('Backup play on intersection failed:', e));
+            observer.disconnect();
           }
         });
-        
-        // Approach 5: Try playing after a page load event
-        window.addEventListener('load', function() {
-          videoElement.play();
+      }, { threshold: 0.1 });
+      
+      observer.observe(videoElement);
+    }
+    
+    // Try using the Page Visibility API
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') {
+        videoElement.play().catch(e => console.log('Play on visibility change failed:', e));
+        backupVideo.play().catch(e => console.log('Backup play on visibility change failed:', e));
+      }
+    });
+    
+    // Try using the requestAnimationFrame API
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    function tryPlayWithRAF() {
+      if (attempts < maxAttempts) {
+        attempts++;
+        requestAnimationFrame(() => {
+          videoElement.play().catch(e => console.log(`RAF attempt ${attempts} failed:`, e));
+          backupVideo.play().catch(e => console.log(`Backup RAF attempt ${attempts} failed:`, e));
+          tryPlayWithRAF();
         });
-        
-        // Approach 6: Try playing after a DOM mutation
-        const observer = new MutationObserver(function(mutations) {
-          videoElement.play();
-          observer.disconnect();
-        });
-        
-        observer.observe(document.body, { 
-          childList: true, 
-          subtree: true 
-        });
-        
-        // Approach 7: Try playing after a network idle
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(function() {
-            videoElement.play();
-          });
-        }
-        
-        // Approach 8: Try playing after a user gesture
-        const simulateUserGesture = function() {
-          // Create and dispatch multiple events to simulate user interaction
-          const events = [
-            new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }),
-            new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }),
-            new MouseEvent('click', { bubbles: true, cancelable: true, view: window }),
-            new TouchEvent('touchstart', { bubbles: true, cancelable: true, view: window }),
-            new TouchEvent('touchend', { bubbles: true, cancelable: true, view: window })
-          ];
-          
-          events.forEach(event => {
-            document.body.dispatchEvent(event);
-          });
-          
-          // Try playing after simulated interaction
-          videoElement.play();
-        };
-        
-        // Try simulating user gesture after a short delay
-        setTimeout(simulateUserGesture, 200);
-        
-        // Approach 9: Try playing with a different video source
-        const originalSrc = videoElement.querySelector('source').src;
-        const tryDifferentSource = function() {
-          // Create a new source element with a slightly modified URL
-          const newSource = document.createElement('source');
-          newSource.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 't=' + Date.now();
-          newSource.type = 'video/mp4';
-          
-          // Replace the old source
-          videoElement.innerHTML = '';
-          videoElement.appendChild(newSource);
-          
-          // Try loading and playing the new source
-          videoElement.load();
-          videoElement.play();
-        };
-        
-        // Try with a different source after a delay
-        setTimeout(tryDifferentSource, 300);
-      });
+      }
+    }
+    
+    tryPlayWithRAF();
   }
 });
 {% endjavascript %} 
