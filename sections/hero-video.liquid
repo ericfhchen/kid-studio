@@ -202,47 +202,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     tryPlayWithRAF();
-    
-    // Fix 10: Try using a different video format
-    // This is a last resort approach that creates a new video element with a different format
-    setTimeout(() => {
-      // Create a completely new video element
-      const newVideo = document.createElement('video');
-      newVideo.className = 'hero-video__video-new';
-      newVideo.style.width = '100%';
-      newVideo.style.height = '100%';
-      newVideo.style.objectFit = 'cover';
-      newVideo.setAttribute('autoplay', '');
-      newVideo.setAttribute('loop', '');
-      newVideo.setAttribute('muted', '');
-      newVideo.setAttribute('playsinline', '');
-      newVideo.setAttribute('webkit-playsinline', '');
-      newVideo.setAttribute('x5-playsinline', '');
-      newVideo.setAttribute('x5-video-player-type', 'h5');
-      newVideo.setAttribute('x5-video-player-fullscreen', 'true');
-      newVideo.setAttribute('x5-video-orientation', 'portraint');
-      newVideo.setAttribute('preload', 'auto');
-      
-      // Copy the source from the original video
-      if (originalSource) {
-        const newSource = document.createElement('source');
-        newSource.src = originalSource.src + (originalSource.src.includes('?') ? '&' : '?') + 't=' + Date.now();
-        newSource.type = originalSource.type;
-        newVideo.appendChild(newSource);
-      }
-      
-      // Add the new video to the DOM
-      videoElement.parentNode.appendChild(newVideo);
-      
-      // Try to play the new video
-      newVideo.play().catch(e => console.log('New video play failed:', e));
-      
-      // Hide the original video if the new one plays successfully
-      newVideo.addEventListener('playing', function() {
-        videoElement.style.display = 'none';
-        backupVideo.style.display = 'none';
-      });
-    }, 600);
   }
 });
 {% endjavascript %} 
