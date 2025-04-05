@@ -70,5 +70,42 @@
 {% endstylesheet %}
 
 {% javascript %}
+document.addEventListener('DOMContentLoaded', function() {
+  const videoElement = document.querySelector('.hero-video__video');
+  
+  if (videoElement) {
+    // Force autoplay attributes
+    videoElement.autoplay = true;
+    videoElement.muted = true;
+    videoElement.playsInline = true;
+    videoElement.setAttribute('playsinline', '');
+    videoElement.setAttribute('webkit-playsinline', '');
+    
+    // Function to attempt playing the video
+    const attemptPlay = function() {
+      videoElement.play().catch(function(error) {
+        console.log('Autoplay failed:', error);
+        
+        // Try again with user interaction
+        document.body.addEventListener('touchstart', function() {
+          videoElement.play().catch(function(e) {
+            console.log('Play attempt after user interaction failed:', e);
+          });
+        }, { once: true });
+      });
+    };
+    
+    // Try to play immediately
+    attemptPlay();
+    
+    // Also try when the page becomes visible (for Instagram in-app browser)
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') {
+        attemptPlay();
+      }
+    });
+  }
+});
+
 // Hero video specific JavaScript can go here
 {% endjavascript %} 
