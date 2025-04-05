@@ -76,46 +76,112 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // If video element exists, try multiple approaches to force playback
   if (videoElement) {
-    // Approach 1: Direct play
+    // Set initial attributes that help with autoplay
+    videoElement.setAttribute('playsinline', '');
+    videoElement.setAttribute('webkit-playsinline', '');
+    videoElement.setAttribute('x5-playsinline', '');
+    videoElement.setAttribute('x5-video-player-type', 'h5');
+    videoElement.setAttribute('x5-video-player-fullscreen', 'true');
+    videoElement.setAttribute('x5-video-orientation', 'portraint');
+    videoElement.setAttribute('preload', 'auto');
+    
+    // Approach 1: Direct play with muted attribute
+    videoElement.muted = true;
     videoElement.play()
       .catch(error => {
         console.log('Initial autoplay attempt failed:', error);
         
-        // Approach 2: Add muted attribute which often allows autoplay
-        videoElement.muted = true;
-        
-        // Approach 3: Simulate user interaction
+        // Approach 2: Try playing with a slight delay
         setTimeout(() => {
-          // Create and dispatch a touch/click event
-          const touchEvent = new TouchEvent('touchstart', {
-            bubbles: true,
-            cancelable: true,
-            view: window
+          videoElement.play()
+            .catch(e => console.log('Delayed autoplay attempt failed:', e));
+        }, 100);
+        
+        // Approach 3: Try playing after a user interaction event
+        const playOnInteraction = function() {
+          videoElement.play();
+          // Remove event listeners after first interaction
+          document.removeEventListener('click', playOnInteraction);
+          document.removeEventListener('touchstart', playOnInteraction);
+          document.removeEventListener('scroll', playOnInteraction);
+        };
+        
+        document.addEventListener('click', playOnInteraction);
+        document.addEventListener('touchstart', playOnInteraction);
+        document.addEventListener('scroll', playOnInteraction);
+        
+        // Approach 4: Try playing after a visibility change
+        document.addEventListener('visibilitychange', function() {
+          if (document.visibilityState === 'visible') {
+            videoElement.play();
+          }
+        });
+        
+        // Approach 5: Try playing after a page load event
+        window.addEventListener('load', function() {
+          videoElement.play();
+        });
+        
+        // Approach 6: Try playing after a DOM mutation
+        const observer = new MutationObserver(function(mutations) {
+          videoElement.play();
+          observer.disconnect();
+        });
+        
+        observer.observe(document.body, { 
+          childList: true, 
+          subtree: true 
+        });
+        
+        // Approach 7: Try playing after a network idle
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(function() {
+            videoElement.play();
+          });
+        }
+        
+        // Approach 8: Try playing after a user gesture
+        const simulateUserGesture = function() {
+          // Create and dispatch multiple events to simulate user interaction
+          const events = [
+            new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }),
+            new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }),
+            new MouseEvent('click', { bubbles: true, cancelable: true, view: window }),
+            new TouchEvent('touchstart', { bubbles: true, cancelable: true, view: window }),
+            new TouchEvent('touchend', { bubbles: true, cancelable: true, view: window })
+          ];
+          
+          events.forEach(event => {
+            document.body.dispatchEvent(event);
           });
           
-          document.body.dispatchEvent(touchEvent);
+          // Try playing after simulated interaction
+          videoElement.play();
+        };
+        
+        // Try simulating user gesture after a short delay
+        setTimeout(simulateUserGesture, 200);
+        
+        // Approach 9: Try playing with a different video source
+        const originalSrc = videoElement.querySelector('source').src;
+        const tryDifferentSource = function() {
+          // Create a new source element with a slightly modified URL
+          const newSource = document.createElement('source');
+          newSource.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 't=' + Date.now();
+          newSource.type = 'video/mp4';
           
-          // Try playing again after simulated interaction
-          videoElement.play()
-            .catch(e => console.log('Autoplay still failed after simulated interaction:', e));
-        }, 100);
+          // Replace the old source
+          videoElement.innerHTML = '';
+          videoElement.appendChild(newSource);
+          
+          // Try loading and playing the new source
+          videoElement.load();
+          videoElement.play();
+        };
+        
+        // Try with a different source after a delay
+        setTimeout(tryDifferentSource, 300);
       });
-    
-    // Approach 4: Add playsinline attribute which helps on iOS
-    videoElement.setAttribute('playsinline', '');
-    
-    // Approach 5: Listen for first user interaction to play video
-    const playVideoOnInteraction = function() {
-      videoElement.play();
-      // Remove event listeners after first interaction
-      document.removeEventListener('click', playVideoOnInteraction);
-      document.removeEventListener('touchstart', playVideoOnInteraction);
-    };
-    
-    document.addEventListener('click', playVideoOnInteraction);
-    document.addEventListener('touchstart', playVideoOnInteraction);
   }
 });
-
-
 {% endjavascript %} 
