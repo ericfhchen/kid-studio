@@ -88,7 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Force muted attribute which is often required for autoplay
     videoElement.muted = true;
     
-    // Create a backup video element that we'll use if the main one fails
+    // Fix 1: Add a poster attribute to the video
+    // This helps with initial loading in Instagram's in-app browser
+    const videoUrl = videoElement.querySelector('source').src;
+    videoElement.setAttribute('poster', videoUrl + '?poster=true');
+    
+    // Fix 2: Create a backup video element with different attributes
     const backupVideo = document.createElement('video');
     backupVideo.className = 'hero-video__video-backup';
     backupVideo.style.display = 'none';
@@ -115,62 +120,91 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add the backup video to the DOM
     videoElement.parentNode.appendChild(backupVideo);
     
-    // Function to try playing the video with various techniques
-    const tryPlayVideo = function(video) {
-      // Try direct play
-      video.play()
-        .catch(error => {
-          console.log('Direct play failed:', error);
-          
-          // Try with a slight delay
-          setTimeout(() => {
-            video.play()
-              .catch(e => console.log('Delayed play failed:', e));
-          }, 100);
-          
-          // Try with a longer delay
-          setTimeout(() => {
-            video.play()
-              .catch(e => console.log('Longer delayed play failed:', e));
-          }, 500);
-          
-          // Try with a much longer delay
-          setTimeout(() => {
-            video.play()
-              .catch(e => console.log('Much longer delayed play failed:', e));
-          }, 2000);
-        });
-    };
-    
-    // Try playing the original video first
-    tryPlayVideo(videoElement);
-    
-    // Try playing the backup video after a short delay
+    // Fix 3: Try playing with a slight delay after page load
     setTimeout(() => {
-      tryPlayVideo(backupVideo);
-    }, 300);
+      videoElement.play()
+        .catch(error => {
+          console.log('Initial autoplay attempt failed:', error);
+          
+          // Fix 4: Try playing the backup video
+          backupVideo.play()
+            .catch(e => console.log('Backup video autoplay failed:', e));
+        });
+    }, 100);
     
-    // Create a function to simulate user interaction
-    const simulateUserInteraction = function() {
-      // Create a fake click event
-      const clickEvent = new MouseEvent('click', {
-        view: window,
-        bubbles: true,
-        cancelable: true
-      });
-      
-      // Dispatch the event on the document
-      document.dispatchEvent(clickEvent);
-      
-      // Also try to play the video directly
-      videoElement.play().catch(e => console.log('Play after simulated click failed:', e));
-      backupVideo.play().catch(e => console.log('Backup play after simulated click failed:', e));
+    // Fix 5: Try playing after a user interaction
+    const playOnInteraction = function() {
+      videoElement.play();
+      backupVideo.play();
+      // Remove event listeners after first interaction
+      document.removeEventListener('click', playOnInteraction);
+      document.removeEventListener('touchstart', playOnInteraction);
     };
     
-    // Try simulating user interaction after a delay
-    setTimeout(simulateUserInteraction, 400);
+    document.addEventListener('click', playOnInteraction);
+    document.addEventListener('touchstart', playOnInteraction);
     
-    // Try a more aggressive approach - create a new video element dynamically
+    // Fix 6: Try playing after a visibility change
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') {
+        videoElement.play();
+        backupVideo.play();
+      }
+    });
+    
+    // Fix 7: Try playing with a different video source
+    const tryDifferentSource = function() {
+      // Create a new source element with a slightly modified URL
+      const newSource = document.createElement('source');
+      newSource.src = videoUrl + (videoUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+      newSource.type = 'video/mp4';
+      
+      // Replace the old source
+      videoElement.innerHTML = '';
+      videoElement.appendChild(newSource);
+      
+      // Try loading and playing the new source
+      videoElement.load();
+      videoElement.play();
+    };
+    
+    // Try with a different source after a delay
+    setTimeout(tryDifferentSource, 300);
+    
+    // Fix 8: Try using the Intersection Observer API
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            videoElement.play();
+            backupVideo.play();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.1 });
+      
+      observer.observe(videoElement);
+    }
+    
+    // Fix 9: Try using the requestAnimationFrame API
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    function tryPlayWithRAF() {
+      if (attempts < maxAttempts) {
+        attempts++;
+        requestAnimationFrame(() => {
+          videoElement.play().catch(e => console.log(`RAF attempt ${attempts} failed:`, e));
+          backupVideo.play().catch(e => console.log(`Backup RAF attempt ${attempts} failed:`, e));
+          tryPlayWithRAF();
+        });
+      }
+    }
+    
+    tryPlayWithRAF();
+    
+    // Fix 10: Try using a different video format
+    // This is a last resort approach that creates a new video element with a different format
     setTimeout(() => {
       // Create a completely new video element
       const newVideo = document.createElement('video');
@@ -209,46 +243,6 @@ document.addEventListener('DOMContentLoaded', function() {
         backupVideo.style.display = 'none';
       });
     }, 600);
-    
-    // Try using the Intersection Observer API to play when visible
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            videoElement.play().catch(e => console.log('Play on intersection failed:', e));
-            backupVideo.play().catch(e => console.log('Backup play on intersection failed:', e));
-            observer.disconnect();
-          }
-        });
-      }, { threshold: 0.1 });
-      
-      observer.observe(videoElement);
-    }
-    
-    // Try using the Page Visibility API
-    document.addEventListener('visibilitychange', function() {
-      if (document.visibilityState === 'visible') {
-        videoElement.play().catch(e => console.log('Play on visibility change failed:', e));
-        backupVideo.play().catch(e => console.log('Backup play on visibility change failed:', e));
-      }
-    });
-    
-    // Try using the requestAnimationFrame API
-    let attempts = 0;
-    const maxAttempts = 10;
-    
-    function tryPlayWithRAF() {
-      if (attempts < maxAttempts) {
-        attempts++;
-        requestAnimationFrame(() => {
-          videoElement.play().catch(e => console.log(`RAF attempt ${attempts} failed:`, e));
-          backupVideo.play().catch(e => console.log(`Backup RAF attempt ${attempts} failed:`, e));
-          tryPlayWithRAF();
-        });
-      }
-    }
-    
-    tryPlayWithRAF();
   }
 });
 {% endjavascript %} 
