@@ -1,26 +1,10 @@
 {% if settings.enable_splash_page %}
 <div class="splash-page" id="splash-page">
   <div class="splash-page__content">
-    <div class="splash-page__image splash-page__image--desktop">
-      {% if section.settings.desktop_image != blank %}
-        <img src="{{ section.settings.desktop_image | img_url: 'master' }}" 
-             alt="{{ section.settings.desktop_image.alt | escape | default: shop.name }}"
-             class="splash-image">
-      {% endif %}
-    </div>
-    <div class="splash-page__image splash-page__image--mobile">
-      {% if section.settings.mobile_image != blank %}
-        <img src="{{ section.settings.mobile_image | img_url: 'master' }}" 
-             alt="{{ section.settings.mobile_image.alt | escape | default: shop.name }}"
-             class="splash-image">
-      {% endif %}
-    </div>
+    <h1 class="splash-headline">{{ section.settings.headline }}</h1>
+    <p class="splash-subheadline">{{ section.settings.subheadline }}</p>
   </div>
-  <noscript>
-    <div class="splash-page__noscript-message">
-      Please enable JavaScript to view this site.
-    </div>
-  </noscript>
+  <p class="splash-credit">{{ section.settings.credit }}</p>
 </div>
 
 <style>
@@ -30,73 +14,61 @@
     left: 0;
     width: 100%;
     height: 100dvh;
-    z-index: 2147483647; /* Maximum z-index value */
+    z-index: 2147483647;
     background-color: {{ settings.splash_page_background }};
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
     overflow: hidden;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
   }
-  
+
   .splash-page__content {
-    width: 100%;
-    height: 100%;
+    flex: 1;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
+    padding: 0 2rem;
   }
-  
-  .splash-page__image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+
+  .splash-headline {
+    font-family: 'Panama Monospace', monospace;
+    font-weight: 700;
+    font-size: 12vw;
+    line-height: 1;
+    color: #1a1a1a;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 0 0 0.5em 0;
+    text-align: left;
   }
-  
-  .splash-image {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    pointer-events: none;
-  }
-  
-  .splash-page__image--desktop {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .splash-page__image--mobile {
-    display: none;
-  }
-  
-  .splash-page__noscript-message {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
+
+  .splash-subheadline {
+    font-family: 'Helvetica', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.75rem;
+    color: #1a1a1a;
+    text-transform: uppercase;
     text-align: center;
-    color: white;
-    font-family: sans-serif;
-    font-size: 16px;
+    letter-spacing: 0.05em;
+    margin: 0;
   }
-  
+
+  .splash-credit {
+    text-align: center;
+    font-family: 'Helvetica', Arial, sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: #1a1a1a;
+    padding: 0 1rem 2rem;
+    margin: 0;
+  }
+
   @media (max-width: 768px) {
-    .splash-page__image--desktop {
-      display: none;
+    .splash-headline {
+      font-size: 14vw;
     }
-    
-    .splash-page__image--mobile {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .splash-subheadline {
+      font-size: 1.125rem;
     }
   }
 </style>
@@ -109,16 +81,23 @@
   "name": "Splash Page",
   "settings": [
     {
-      "type": "image_picker",
-      "id": "desktop_image",
-      "label": "Desktop Image",
-      "info": "Recommended: SVG image that will scale properly. Will display at 100% width or height, whichever is smaller."
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "GOD BLESS TORONTO"
     },
     {
-      "type": "image_picker",
-      "id": "mobile_image",
-      "label": "Mobile Image",
-      "info": "Recommended: SVG image that will scale properly. Will display at 100% width or height, whichever is smaller."
+      "type": "text",
+      "id": "subheadline",
+      "label": "Subheadline / Date",
+      "default": "APRIL 4, 2025",
+      "info": "Shown below the headline in bold"
+    },
+    {
+      "type": "text",
+      "id": "credit",
+      "label": "Bottom credit",
+      "default": "A Decade of Kid. Studio"
     }
   ],
   "presets": [
