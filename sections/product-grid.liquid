@@ -1,49 +1,107 @@
 <div class="product-grid">
   <div class="container">
     
-    {% assign collection = collections['all'] %}
+    {% assign collection = section.settings.collection | default: collections['frontpage'] %}
     
     {% if collection.products.size > 0 %}
       <div class="product-grid__grid">
-        {% for product in collection.products limit: section.settings.products_limit %}
-          <div class="product-grid__item">
+        {% for product in collection.products %}
+          <div class="product-grid__item{% if forloop.first %} product-grid__item--featured{% endif %}">
             <div class="product-grid__card">
-              {% if product.featured_image != blank %}
-                <div class="product-grid__image-container">
-                  <img 
-                    src="{{ product.featured_image | img_url: 'master' }}" 
-                    alt="{{ product.featured_image.alt | escape }}"
-                    class="product-grid__image"
-                    loading="lazy"
-                  >
-                </div>
-              {% else %}
-                <div class="product-grid__image-container">
-                  {{ 'product-1' | placeholder_svg_tag: 'product-grid__image placeholder-svg' }}
-                </div>
-              {% endif %}
+              <div class="product-grid__image-container">
+                {% if product.images.size > 0 %}
+                  {% for image in product.images %}
+                    {% if forloop.parentloop.first %}
+                    <img
+                      src="{{ image | img_url: '1600x' }}"
+                      srcset="{{ image | img_url: '800x' }} 800w,
+                              {{ image | img_url: '1200x' }} 1200w,
+                              {{ image | img_url: '1600x' }} 1600w,
+                              {{ image | img_url: '2000x' }} 2000w"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      alt="{{ image.alt | escape }}"
+                      class="product-grid__image{% if forloop.first %} product-grid__image--active{% endif %}"
+                      loading="eager"{% if forloop.first %} fetchpriority="high"{% endif %}
+                    >
+                    {% else %}
+                    <img
+                      src="{{ image | img_url: '800x' }}"
+                      srcset="{{ image | img_url: '400x' }} 400w,
+                              {{ image | img_url: '600x' }} 600w,
+                              {{ image | img_url: '800x' }} 800w,
+                              {{ image | img_url: '1200x' }} 1200w"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      alt="{{ image.alt | escape }}"
+                      class="product-grid__image{% if forloop.first %} product-grid__image--active{% endif %}"
+                      loading="lazy"
+                    >
+                    {% endif %}
+                  {% endfor %}
+                  {% if product.images.size > 1 %}
+                    <div class="product-grid__nav product-grid__nav--left" aria-label="Previous image"></div>
+                    <div class="product-grid__nav product-grid__nav--right" aria-label="Next image"></div>
+                  {% endif %}
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'product-grid__image product-grid__image--active placeholder-svg' }}
+                {% endif %}
+              </div>
               
               <div class="product-grid__content">
-                {% assign cover_type = product.metafields.custom.book_cover_type %}
-                
-                <span class="product-grid__product-title" data-cover-type="{{ cover_type }}">
-                  {{ cover_type }}
-                </span>
-                
-                <div class="product-grid__price">
-                  {% if product.compare_at_price > product.price %}
-                    <span class="product-grid__price--sale">{{ product.price | money }}</span>
-                    <span class="product-grid__price--compare">{{ product.compare_at_price | money }}</span>
-                  {% else %}
-                    <span>{{ product.price | money }}</span>
+                {% if forloop.first %}
+                  <h2 class="product-grid__product-title">{{ product.title }}</h2>
+                  <div class="product-grid__description">{{ product.description }}</div>
+
+                  {% if product.variants.size > 1 %}
+                    <div class="product-grid__variants" data-product-id="{{ product.id }}">
+                      {% for variant in product.variants %}
+                        <button
+                          class="product-grid__variant-button{% if forloop.first %} product-grid__variant-button--active{% endif %}"
+                          data-variant-id="{{ variant.id }}"
+                          data-variant-price="{{ variant.price }}"
+                          data-variant-compare-price="{{ variant.compare_at_price }}"
+                          data-variant-image="{{ variant.image | img_url: '1200x' }}">
+                          {{ variant.title }}
+                        </button>
+                      {% endfor %}
+                    </div>
                   {% endif %}
-                </div>
-                
-                <button class="product-grid__buy-button" 
-                        data-product-id="{{ product.id }}"
-                        data-variant-id="{{ product.selected_or_first_available_variant.id }}">
-                  BUY
-                </button>
+
+                  <div class="product-grid__price">
+                    {% if product.compare_at_price > product.price %}
+                      <span class="product-grid__price--sale">{{ product.price | money }}</span>
+                      <span class="product-grid__price--compare">{{ product.compare_at_price | money }}</span>
+                    {% else %}
+                      <span>{{ product.price | money }}</span>
+                    {% endif %}
+                  </div>
+
+                  <button class="product-grid__buy-button"
+                          data-product-id="{{ product.id }}"
+                          data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+                    ADD TO CART
+                  </button>
+                {% else %}
+                  {% assign cover_type = product.metafields.custom.book_cover_type %}
+
+                  <span class="product-grid__product-title" data-cover-type="{{ cover_type }}">
+                    {{ cover_type }}
+                  </span>
+
+                  <div class="product-grid__price">
+                    {% if product.compare_at_price > product.price %}
+                      <span class="product-grid__price--sale">{{ product.price | money }}</span>
+                      <span class="product-grid__price--compare">{{ product.compare_at_price | money }}</span>
+                    {% else %}
+                      <span>{{ product.price | money }}</span>
+                    {% endif %}
+                  </div>
+
+                  <button class="product-grid__buy-button"
+                          data-product-id="{{ product.id }}"
+                          data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+                    ADD TO CART
+                  </button>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -71,15 +129,6 @@
       "type": "collection",
       "id": "collection",
       "label": "Collection"
-    },
-    {
-      "type": "range",
-      "id": "products_limit",
-      "min": 2,
-      "max": 12,
-      "step": 2,
-      "default": 4,
-      "label": "Number of products to show"
     }
   ],
   "presets": [
@@ -102,6 +151,13 @@
   gap: 30px;
 }
 
+.product-grid__item--featured {
+  grid-column: 1 / -1;
+  width: 50%;
+  margin: 0 auto;
+  overflow: visible;
+}
+
 .product-grid__card {
   overflow: hidden;
 }
@@ -119,6 +175,30 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  background-color: #f0f0f0;
+  display: none;
+}
+
+.product-grid__image--active {
+  display: block;
+}
+
+.product-grid__nav {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 1;
+}
+
+.product-grid__nav--left {
+  left: 0;
+  cursor: w-resize;
+}
+
+.product-grid__nav--right {
+  right: 0;
+  cursor: e-resize;
 }
 
 .product-grid__content {
@@ -130,6 +210,106 @@
 .product-grid__product-title {
   margin-bottom: 10px;
   font-weight: 500;
+}
+
+.product-grid__item--featured .product-grid__image-container {
+  margin-bottom: 1.5rem;
+}
+
+.product-grid__item--featured .product-grid__product-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.product-grid__description {
+  font-family: Helvetica, sans-serif;
+  font-size: 0.75rem;
+  font-weight: bold;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0rem;
+}
+
+.product-grid__description table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  white-space: nowrap;
+  height: auto !important;
+  width: auto !important;
+}
+
+.product-grid__description tr {
+  height: auto !important;
+}
+
+.product-grid__description th,
+.product-grid__description td {
+  border: 1px solid #000;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  line-height: 1.1;
+  height: auto !important;
+  width: auto !important;
+}
+
+.product-grid__sizing-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: Helvetica, sans-serif;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0.75rem 0 0.25rem;
+}
+
+.product-grid__sizing-toggle .chevron {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.product-grid__sizing-toggle--open .chevron {
+  transform: rotate(180deg);
+}
+
+.product-grid__sizing-content {
+  display: none;
+  margin-top: 0.25rem;
+}
+
+.product-grid__sizing-content--open {
+  display: block;
+}
+
+.product-grid__variants {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.product-grid__variant-button {
+  font-family: 'Panama Monospace', monospace;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.5rem 0.6rem 0.35rem;
+  border: 2px solid #000;
+  background: none;
+  cursor: pointer;
+  width: 3.5rem;
+  text-align: center;
+}
+
+.product-grid__variant-button--active {
+  background: #000;
+  color: #fff;
 }
 
 .product-grid__price {
@@ -165,6 +345,16 @@
   animation: blink 0.1s linear infinite;
 }
 
+.cart__item-details {
+  margin-top: 0.25rem;
+}
+
+.cart__item-variant {
+  font-size: 0.75rem;
+  color: #000;
+  margin: 0;
+}
+
 .product-grid__empty {
   text-align: center;
   padding: 40px;
@@ -193,235 +383,107 @@
     grid-template-columns: 1fr;
     gap: 20px;
   }
+
+  .product-grid__item--featured {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .product-grid__item--featured .product-grid__product-title {
+    font-size: 1.5rem;
+  }
+
+  .product-grid__description {
+    overflow-x: auto;
+  }
+
+  .product-grid__variants {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
 }
 {% endstylesheet %}
 
 {% javascript %}
 document.addEventListener('DOMContentLoaded', function() {
-  // Debug toggle - Uncomment to show debug info
-  // const debugInfo = document.querySelector('.debug-info');
-  // if (debugInfo) {
-  //   debugInfo.style.display = 'block';
-  // }
-  
-  // Add to cart functionality
-  const buyButtons = document.querySelectorAll('.product-grid__buy-button');
-  
-  buyButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const variantId = this.dataset.variantId;
-      const productId = this.dataset.productId;
-      
-      // Get the product element to extract metadata
-      const productElement = this.closest('.product-grid__item');
-      const titleElement = productElement.querySelector('.product-grid__product-title');
-      // Get cover type from data attribute
-      const bookCoverType = titleElement ? titleElement.dataset.coverType : '';
-      
-      console.log('Adding to cart:', {
-        variantId,
-        productId,
-        bookCoverType
+  var desc = document.querySelector('.product-grid__description');
+  if (desc) {
+    var table = desc.querySelector('table');
+    if (table) {
+      var toggle = document.createElement('button');
+      toggle.className = 'product-grid__sizing-toggle';
+      toggle.innerHTML = 'SIZING <span class="chevron">&#9662;</span>';
+      var content = document.createElement('div');
+      content.className = 'product-grid__sizing-content';
+      table.parentNode.insertBefore(toggle, table);
+      content.appendChild(table);
+      toggle.after(content);
+      toggle.addEventListener('click', function() {
+        toggle.classList.toggle('product-grid__sizing-toggle--open');
+        content.classList.toggle('product-grid__sizing-content--open');
       });
-      
-      // Call Shopify AJAX API to add item to cart
-      fetch('/cart/add.js', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          id: variantId,
-          quantity: 1,
-          properties: {
-            'Book Cover Type': bookCoverType
-          }
-        })
-      })
-      .then(response => response.json())
-      .then(item => {
-        // Show cart
-        const cartContainer = document.getElementById('cart-container');
-        if (cartContainer && cartContainer.classList.contains('hidden')) {
-          cartContainer.classList.remove('hidden');
-        }
-        
-        // Show cart overlay
-        const cartOverlay = document.getElementById('cart-overlay');
-        if (cartOverlay) {
-          cartOverlay.style.display = 'block';
-        }
-        
-        // Refresh cart contents
-        fetch('/cart.js')
-          .then(response => response.json())
-          .then(cart => {
-            updateCartUI(cart);
-          })
-          .catch(error => console.error('Error:', error));
-      })
-      .catch(error => console.error('Error:', error));
-    });
-  });
-  
-  function updateCartUI(cart) {
-    const cartEmpty = document.querySelector('.cart__empty');
-    const cartItems = document.querySelector('.cart__items');
-    const cartFooter = document.querySelector('.cart__footer');
-    const subtotalElement = document.querySelector('.cart__subtotal span:last-child');
-    const cartOverlay = document.getElementById('cart-overlay');
-    
-    if (cart.item_count === 0) {
-      if (cartEmpty) cartEmpty.classList.remove('hidden');
-      if (cartItems) cartItems.classList.add('hidden');
-      if (cartFooter) cartFooter.classList.add('hidden');
-    } else {
-      if (cartEmpty) cartEmpty.classList.add('hidden');
-      if (cartItems) cartItems.classList.remove('hidden');
-      if (cartFooter) cartFooter.classList.remove('hidden');
-      
-      // Update subtotal
-      if (subtotalElement) {
-        subtotalElement.textContent = formatMoney(cart.total_price);
-      }
-      
-      // Show cart overlay
-      if (cartOverlay) {
-        cartOverlay.style.display = 'block';
-      }
-      
-      // Update cart items without page refresh
-      updateCartItems(cart);
     }
   }
-  
-  function updateCartItems(cart) {
-    const cartItemsContainer = document.querySelector('.cart__items');
-    if (!cartItemsContainer) return;
-    
-    // Clear existing items
-    cartItemsContainer.innerHTML = '';
-    
-    // Add each item to the cart
-    cart.items.forEach(item => {
-      const itemElement = document.createElement('div');
-      itemElement.className = 'cart__item';
-      itemElement.dataset.variantId = item.variant_id;
-      
-      const imageUrl = item.image ? item.image.replace(/(\.[^.]*)$/, '_200x$1') : '';
-      
-      // Check for properties
-      let metafieldHtml = '';
-      if (item.properties && item.properties['Book Cover Type']) {
-        metafieldHtml = `<p class="cart__item-metafield">${item.properties['Book Cover Type']}</p>`;
-      }
-      
-      itemElement.innerHTML = `
-        <div class="cart__item-image">
-          <img src="${imageUrl}" alt="${item.title}">
-        </div>
-        <div class="cart__item-details">
-          <h3 class="cart__item-title">${item.product_title}</h3>
-          ${metafieldHtml}
-          <p class="cart__item-price">${formatMoney(item.final_line_price)}</p>
-          <div class="cart__item-quantity">
-            <button class="cart__item-quantity-decrease" aria-label="Decrease quantity">-</button>
-            <input class="cart__item-quantity-input" type="number" value="${item.quantity}" min="1" aria-label="Item quantity">
-            <button class="cart__item-quantity-increase" aria-label="Increase quantity">+</button>
-          </div>
-          <button class="cart__item-remove" aria-label="Remove item">Remove</button>
-        </div>
-      `;
-      
-      cartItemsContainer.appendChild(itemElement);
-    });
-    
-    // Re-attach event listeners for the new cart items
-    attachCartItemEventListeners();
-  }
-  
-  function attachCartItemEventListeners() {
-    // Quantity decrease buttons
-    document.querySelectorAll('.cart__item-quantity-decrease').forEach(button => {
-      button.addEventListener('click', function() {
-        const input = this.nextElementSibling;
-        const currentValue = parseInt(input.value);
-        const cartItem = this.closest('.cart__item');
-        
-        if (currentValue <= 1) {
-          // If quantity is 1 or less, remove the item
-          removeCartItem(cartItem);
+
+  document.addEventListener('click', function(e) {
+    var nav = e.target.closest('.product-grid__nav');
+    if (!nav) return;
+    var container = nav.closest('.product-grid__image-container');
+    var images = container.querySelectorAll('.product-grid__image');
+    var current = container.querySelector('.product-grid__image--active');
+    var index = Array.prototype.indexOf.call(images, current);
+
+    current.classList.remove('product-grid__image--active');
+    if (nav.classList.contains('product-grid__nav--right')) {
+      images[(index + 1) % images.length].classList.add('product-grid__image--active');
+    } else {
+      images[(index - 1 + images.length) % images.length].classList.add('product-grid__image--active');
+    }
+  });
+
+  var variantContainer = document.querySelector('.product-grid__variants');
+  if (variantContainer) {
+    var featuredItem = document.querySelector('.product-grid__item--featured');
+    var buyButton = featuredItem.querySelector('.product-grid__buy-button');
+    var priceContainer = featuredItem.querySelector('.product-grid__price');
+
+    variantContainer.querySelectorAll('.product-grid__variant-button').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        variantContainer.querySelector('.product-grid__variant-button--active').classList.remove('product-grid__variant-button--active');
+        btn.classList.add('product-grid__variant-button--active');
+
+        buyButton.dataset.variantId = btn.dataset.variantId;
+
+        var price = parseInt(btn.dataset.variantPrice);
+        var comparePrice = parseInt(btn.dataset.variantComparePrice);
+        if (comparePrice > price) {
+          priceContainer.innerHTML = '<span class="product-grid__price--sale">' + formatMoney(price) + '</span><span class="product-grid__price--compare">' + formatMoney(comparePrice) + '</span>';
         } else {
-          // Otherwise decrease the quantity
-          input.value = currentValue - 1;
-          updateCartItem(cartItem, currentValue - 1);
+          priceContainer.innerHTML = '<span>' + formatMoney(price) + '</span>';
         }
       });
     });
-    
-    // Quantity increase buttons
-    document.querySelectorAll('.cart__item-quantity-increase').forEach(button => {
-      button.addEventListener('click', function() {
-        const input = this.previousElementSibling;
-        const currentValue = parseInt(input.value);
-        input.value = currentValue + 1;
-        updateCartItem(this.closest('.cart__item'), currentValue + 1);
-      });
+  }
+
+  document.querySelectorAll('.product-grid__buy-button').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var variantId = this.dataset.variantId;
+      var productElement = this.closest('.product-grid__item');
+      var titleElement = productElement.querySelector('.product-grid__product-title');
+      var bookCoverType = titleElement ? titleElement.dataset.coverType : '';
+
+      addToCart(variantId, 1, { 'Book Cover Type': bookCoverType })
+        .then(function() {
+          var cartContainer = document.getElementById('cart-container');
+          if (cartContainer && cartContainer.classList.contains('hidden')) {
+            cartContainer.classList.remove('hidden');
+          }
+          return fetch('/cart.js').then(function(r) { return r.json(); });
+        })
+        .then(function(cart) {
+          updateCartUI(cart);
+        });
     });
-    
-    // Remove buttons
-    document.querySelectorAll('.cart__item-remove').forEach(button => {
-      button.addEventListener('click', function() {
-        const cartItem = this.closest('.cart__item');
-        removeCartItem(cartItem);
-      });
-    });
-  }
-  
-  function removeCartItem(cartItem) {
-    const variantId = cartItem.dataset.variantId;
-    
-    // Call Shopify AJAX API to remove item
-    fetch('/cart/change.js', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        id: variantId,
-        quantity: 0
-      })
-    })
-    .then(response => response.json())
-    .then(cart => {
-      updateCartUI(cart);
-    })
-    .catch(error => console.error('Error:', error));
-  }
-  
-  function updateCartItem(cartItem, quantity) {
-    const variantId = cartItem.dataset.variantId;
-    
-    // Call Shopify AJAX API to update item quantity
-    fetch('/cart/change.js', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        id: variantId,
-        quantity: quantity
-      })
-    })
-    .then(response => response.json())
-    .then(cart => {
-      updateCartUI(cart);
-    })
-    .catch(error => console.error('Error:', error));
-  }
-  
-  function formatMoney(cents) {
-    return '$' + (cents / 100).toFixed(2);
-  }
+  });
 });
 {% endjavascript %} 

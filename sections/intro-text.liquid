@@ -237,7 +237,7 @@
   "configuredImageUrls": [
     {% for block in section.blocks %}
       {% if block.type == 'hover_image' and block.settings.image != blank %}
-        "{{ block.settings.image | img_url: 'master' }}"{% unless forloop.last %},{% endunless %}
+        "{{ block.settings.image | img_url: '600x' }}"{% unless forloop.last %},{% endunless %}
       {% endif %}
     {% endfor %}
   ],
@@ -262,7 +262,6 @@ document.addEventListener('DOMContentLoaded', function() {
     config = JSON.parse(configElement.textContent);
   } catch (error) {
     // Keep only critical error that would prevent functionality
-    console.error('Failed to parse hover image configuration');
     return;
   }
 

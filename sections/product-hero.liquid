@@ -3,8 +3,13 @@
     <div class="product-hero__content">
       <div class="product-hero__image-container" style="width: {{ section.settings.image_container_width_desktop | default: 75 }}%;">
         {% if section.settings.image != blank %}
-          <img 
-            src="{{ section.settings.image | img_url: 'master' }}" 
+          <img
+            src="{{ section.settings.image | img_url: '1600x' }}"
+            srcset="{{ section.settings.image | img_url: '800x' }} 800w,
+                    {{ section.settings.image | img_url: '1200x' }} 1200w,
+                    {{ section.settings.image | img_url: '1600x' }} 1600w,
+                    {{ section.settings.image | img_url: '2400x' }} 2400w"
+            sizes="(max-width: 768px) {{ section.settings.image_container_width_mobile | default: 100 }}vw, {{ section.settings.image_container_width_desktop | default: 75 }}vw"
             alt="{{ section.settings.image.alt | escape }}"
             class="product-hero__image"
             loading="lazy"
