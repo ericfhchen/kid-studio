@@ -75,11 +75,15 @@
                     {% endif %}
                   </div>
 
-                  <button class="product-grid__buy-button"
-                          data-product-id="{{ product.id }}"
-                          data-variant-id="{{ product.selected_or_first_available_variant.id }}">
-                    ADD TO CART
-                  </button>
+                  {% if product.available %}
+                    <button class="product-grid__buy-button"
+                            data-product-id="{{ product.id }}"
+                            data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+                      ADD TO CART
+                    </button>
+                  {% else %}
+                    <span class="product-grid__sold-out">SOLD OUT</span>
+                  {% endif %}
                 {% else %}
                   {% assign cover_type = product.metafields.custom.book_cover_type %}
 
@@ -96,11 +100,15 @@
                     {% endif %}
                   </div>
 
-                  <button class="product-grid__buy-button"
-                          data-product-id="{{ product.id }}"
-                          data-variant-id="{{ product.selected_or_first_available_variant.id }}">
-                    ADD TO CART
-                  </button>
+                  {% if product.available %}
+                    <button class="product-grid__buy-button"
+                            data-product-id="{{ product.id }}"
+                            data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+                      ADD TO CART
+                    </button>
+                  {% else %}
+                    <span class="product-grid__sold-out">SOLD OUT</span>
+                  {% endif %}
                 {% endif %}
               </div>
             </div>
@@ -345,6 +353,17 @@
   animation: blink 0.1s linear infinite;
 }
 
+.product-grid__sold-out {
+  display: block;
+  width: auto;
+  margin: 0 auto;
+  text-align: center;
+  color: #999999;
+  font-weight: bold;
+  font-size: 2rem;
+  font-family: Helvetica, sans-serif;
+}
+
 .cart__item-details {
   margin-top: 0.25rem;
 }
@@ -375,7 +394,8 @@
     margin-bottom: 1rem;
   }
 
-  .product-grid__buy-button {
+  .product-grid__buy-button,
+  .product-grid__sold-out {
     font-size: 1.5rem;
   }
   
